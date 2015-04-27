@@ -7,9 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		18095C701AE3861100267898 /* MonthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 18095C6F1AE3861100267898 /* MonthView.m */; };
+		180A4A1B1AE4A0C600112073 /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 180A4A1A1AE4A0C600112073 /* HeadView.m */; };
+		180A4A1F1AE4ED8700112073 /* Circle.m in Sources */ = {isa = PBXBuildFile; fileRef = 180A4A1E1AE4ED8700112073 /* Circle.m */; };
+		180A4A381AE6508F00112073 /* next.png in Resources */ = {isa = PBXBuildFile; fileRef = 180A4A361AE6508F00112073 /* next.png */; };
+		180A4A391AE6508F00112073 /* previous.png in Resources */ = {isa = PBXBuildFile; fileRef = 180A4A371AE6508F00112073 /* previous.png */; };
+		180A4A3F1AE6725600112073 /* FuncBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = 180A4A3E1AE6725600112073 /* FuncBlockView.m */; };
+		180A4A431AEDC6B200112073 /* AVOSCloud.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180A4A421AEDC6B100112073 /* AVOSCloud.framework */; };
+		180A4A451AEDC71A00112073 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180A4A441AEDC71A00112073 /* SystemConfiguration.framework */; };
+		180A4A471AEDC72E00112073 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180A4A461AEDC72E00112073 /* CoreLocation.framework */; };
+		180A4A491AEDC74000112073 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 180A4A481AEDC74000112073 /* libicucore.dylib */; };
+		180A4A541AEDD86F00112073 /* DayDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180A4A4F1AEDD86F00112073 /* DayDetailViewController.m */; };
+		180A4A551AEDD86F00112073 /* PickViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180A4A511AEDD86F00112073 /* PickViewController.m */; };
+		180A4A561AEDD86F00112073 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180A4A531AEDD86F00112073 /* ViewController.m */; };
+		180A4A5A1AEDD8C200112073 /* Lesson.m in Sources */ = {isa = PBXBuildFile; fileRef = 180A4A591AEDD8C200112073 /* Lesson.m */; };
+		1864B5661ADE5E750096CB84 /* DayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1864B5651ADE5E750096CB84 /* DayView.m */; };
 		18DBD73C1ADE56B900D174BB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DBD73B1ADE56B900D174BB /* AppDelegate.m */; };
 		18DBD73E1ADE56B900D174BB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DBD73D1ADE56B900D174BB /* main.m */; };
-		18DBD7411ADE56B900D174BB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DBD7401ADE56B900D174BB /* ViewController.m */; };
 		18DBD7431ADE56BA00D174BB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18DBD7421ADE56BA00D174BB /* Images.xcassets */; };
 		18DBD7461ADE56BA00D174BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18DBD7441ADE56BA00D174BB /* Main.storyboard */; };
 		18DBD7521ADE56BA00D174BB /* EducationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DBD7511ADE56BA00D174BB /* EducationTests.m */; };
@@ -26,13 +40,36 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		18095C6E1AE3861100267898 /* MonthView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonthView.h; path = Education/View/MonthView.h; sourceTree = "<group>"; };
+		18095C6F1AE3861100267898 /* MonthView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MonthView.m; path = Education/View/MonthView.m; sourceTree = "<group>"; };
+		180A4A191AE4A0C600112073 /* HeadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeadView.h; path = Education/View/HeadView.h; sourceTree = "<group>"; };
+		180A4A1A1AE4A0C600112073 /* HeadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HeadView.m; path = Education/View/HeadView.m; sourceTree = "<group>"; };
+		180A4A1C1AE4A45D00112073 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrefixHeader.pch; path = Education/PrefixHeader.pch; sourceTree = "<group>"; };
+		180A4A1D1AE4ED8700112073 /* Circle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Circle.h; path = Education/View/Circle.h; sourceTree = "<group>"; };
+		180A4A1E1AE4ED8700112073 /* Circle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Circle.m; path = Education/View/Circle.m; sourceTree = "<group>"; };
+		180A4A361AE6508F00112073 /* next.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = next.png; path = Education/Resource/next.png; sourceTree = "<group>"; };
+		180A4A371AE6508F00112073 /* previous.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = previous.png; path = Education/Resource/previous.png; sourceTree = "<group>"; };
+		180A4A3D1AE6725600112073 /* FuncBlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FuncBlockView.h; path = Education/View/FuncBlockView.h; sourceTree = "<group>"; };
+		180A4A3E1AE6725600112073 /* FuncBlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FuncBlockView.m; path = Education/View/FuncBlockView.m; sourceTree = "<group>"; };
+		180A4A421AEDC6B100112073 /* AVOSCloud.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVOSCloud.framework; path = "../../../Downloads/各种SDK/OSX/release-v2.5.1/AVOSCloud.framework"; sourceTree = "<group>"; };
+		180A4A441AEDC71A00112073 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		180A4A461AEDC72E00112073 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		180A4A481AEDC74000112073 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		180A4A4E1AEDD86F00112073 /* DayDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DayDetailViewController.h; path = ViewController/DayDetailViewController.h; sourceTree = "<group>"; };
+		180A4A4F1AEDD86F00112073 /* DayDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DayDetailViewController.m; path = ViewController/DayDetailViewController.m; sourceTree = "<group>"; };
+		180A4A501AEDD86F00112073 /* PickViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PickViewController.h; path = ViewController/PickViewController.h; sourceTree = "<group>"; };
+		180A4A511AEDD86F00112073 /* PickViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PickViewController.m; path = ViewController/PickViewController.m; sourceTree = "<group>"; };
+		180A4A521AEDD86F00112073 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewController.h; path = ViewController/ViewController.h; sourceTree = "<group>"; };
+		180A4A531AEDD86F00112073 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewController.m; path = ViewController/ViewController.m; sourceTree = "<group>"; };
+		180A4A581AEDD8C200112073 /* Lesson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Lesson.h; path = Class/Lesson.h; sourceTree = "<group>"; };
+		180A4A591AEDD8C200112073 /* Lesson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Lesson.m; path = Class/Lesson.m; sourceTree = "<group>"; };
+		1864B5641ADE5E750096CB84 /* DayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DayView.h; path = Education/View/DayView.h; sourceTree = "<group>"; };
+		1864B5651ADE5E750096CB84 /* DayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DayView.m; path = Education/View/DayView.m; sourceTree = "<group>"; };
 		18DBD7351ADE56B900D174BB /* Education.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Education.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18DBD7391ADE56B900D174BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		18DBD73A1ADE56B900D174BB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		18DBD73B1ADE56B900D174BB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		18DBD73D1ADE56B900D174BB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		18DBD73F1ADE56B900D174BB /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		18DBD7401ADE56B900D174BB /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		18DBD7421ADE56BA00D174BB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		18DBD7451ADE56BA00D174BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		18DBD74B1ADE56BA00D174BB /* EducationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EducationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,6 +82,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				180A4A491AEDC74000112073 /* libicucore.dylib in Frameworks */,
+				180A4A471AEDC72E00112073 /* CoreLocation.framework in Frameworks */,
+				180A4A451AEDC71A00112073 /* SystemConfiguration.framework in Frameworks */,
+				180A4A431AEDC6B200112073 /* AVOSCloud.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,9 +99,60 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		180A4A351AE6508000112073 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				180A4A361AE6508F00112073 /* next.png */,
+				180A4A371AE6508F00112073 /* previous.png */,
+			);
+			name = Resource;
+			sourceTree = "<group>";
+		};
+		180A4A4D1AEDD81A00112073 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				180A4A4E1AEDD86F00112073 /* DayDetailViewController.h */,
+				180A4A4F1AEDD86F00112073 /* DayDetailViewController.m */,
+				180A4A501AEDD86F00112073 /* PickViewController.h */,
+				180A4A511AEDD86F00112073 /* PickViewController.m */,
+				180A4A521AEDD86F00112073 /* ViewController.h */,
+				180A4A531AEDD86F00112073 /* ViewController.m */,
+			);
+			name = ViewController;
+			sourceTree = "<group>";
+		};
+		180A4A571AEDD8A200112073 /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				180A4A581AEDD8C200112073 /* Lesson.h */,
+				180A4A591AEDD8C200112073 /* Lesson.m */,
+			);
+			name = Class;
+			sourceTree = "<group>";
+		};
+		1864B5671ADE5E7C0096CB84 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				180A4A1D1AE4ED8700112073 /* Circle.h */,
+				180A4A1E1AE4ED8700112073 /* Circle.m */,
+				180A4A191AE4A0C600112073 /* HeadView.h */,
+				180A4A1A1AE4A0C600112073 /* HeadView.m */,
+				18095C6E1AE3861100267898 /* MonthView.h */,
+				18095C6F1AE3861100267898 /* MonthView.m */,
+				1864B5641ADE5E750096CB84 /* DayView.h */,
+				1864B5651ADE5E750096CB84 /* DayView.m */,
+				180A4A3D1AE6725600112073 /* FuncBlockView.h */,
+				180A4A3E1AE6725600112073 /* FuncBlockView.m */,
+			);
+			name = View;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		18DBD72C1ADE56B900D174BB = {
 			isa = PBXGroup;
 			children = (
+				180A4A351AE6508000112073 /* Resource */,
+				180A4A1C1AE4A45D00112073 /* PrefixHeader.pch */,
 				18DBD7371ADE56B900D174BB /* Education */,
 				18DBD74E1ADE56BA00D174BB /* EducationTests */,
 				18DBD7361ADE56B900D174BB /* Products */,
@@ -79,10 +171,11 @@
 		18DBD7371ADE56B900D174BB /* Education */ = {
 			isa = PBXGroup;
 			children = (
+				180A4A571AEDD8A200112073 /* Class */,
+				1864B5671ADE5E7C0096CB84 /* View */,
+				180A4A4D1AEDD81A00112073 /* ViewController */,
 				18DBD73A1ADE56B900D174BB /* AppDelegate.h */,
 				18DBD73B1ADE56B900D174BB /* AppDelegate.m */,
-				18DBD73F1ADE56B900D174BB /* ViewController.h */,
-				18DBD7401ADE56B900D174BB /* ViewController.m */,
 				18DBD7421ADE56BA00D174BB /* Images.xcassets */,
 				18DBD7441ADE56BA00D174BB /* Main.storyboard */,
 				18DBD7381ADE56B900D174BB /* Supporting Files */,
@@ -93,6 +186,10 @@
 		18DBD7381ADE56B900D174BB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				180A4A481AEDC74000112073 /* libicucore.dylib */,
+				180A4A461AEDC72E00112073 /* CoreLocation.framework */,
+				180A4A441AEDC71A00112073 /* SystemConfiguration.framework */,
+				180A4A421AEDC6B100112073 /* AVOSCloud.framework */,
 				18DBD7391ADE56B900D174BB /* Info.plist */,
 				18DBD73D1ADE56B900D174BB /* main.m */,
 			);
@@ -196,8 +293,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				180A4A391AE6508F00112073 /* previous.png in Resources */,
 				18DBD7431ADE56BA00D174BB /* Images.xcassets in Resources */,
 				18DBD7461ADE56BA00D174BB /* Main.storyboard in Resources */,
+				180A4A381AE6508F00112073 /* next.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,8 +314,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18DBD7411ADE56B900D174BB /* ViewController.m in Sources */,
+				18095C701AE3861100267898 /* MonthView.m in Sources */,
+				180A4A1F1AE4ED8700112073 /* Circle.m in Sources */,
+				180A4A551AEDD86F00112073 /* PickViewController.m in Sources */,
+				1864B5661ADE5E750096CB84 /* DayView.m in Sources */,
+				180A4A561AEDD86F00112073 /* ViewController.m in Sources */,
+				180A4A1B1AE4A0C600112073 /* HeadView.m in Sources */,
+				180A4A541AEDD86F00112073 /* DayDetailViewController.m in Sources */,
+				180A4A3F1AE6725600112073 /* FuncBlockView.m in Sources */,
 				18DBD73E1ADE56B900D174BB /* main.m in Sources */,
+				180A4A5A1AEDD8C200112073 /* Lesson.m in Sources */,
 				18DBD73C1ADE56B900D174BB /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -332,6 +439,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/apple/Downloads/各种SDK/OSX/release-v2.5.1",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/Education/PrefixHeader.pch";
 				INFOPLIST_FILE = Education/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -343,6 +456,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/apple/Downloads/各种SDK/OSX/release-v2.5.1",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/Education/PrefixHeader.pch";
 				INFOPLIST_FILE = Education/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -404,6 +523,7 @@
 				18DBD7571ADE56BA00D174BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		18DBD7581ADE56BA00D174BB /* Build configuration list for PBXNativeTarget "EducationTests" */ = {
 			isa = XCConfigurationList;
@@ -412,6 +532,7 @@
 				18DBD75A1ADE56BA00D174BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
