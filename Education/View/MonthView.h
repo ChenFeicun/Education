@@ -17,8 +17,13 @@
 
 @interface MonthView : NSView
 
+//日历显示  第一格和最后一格日期
+@property (strong, nonatomic) NSString *firstDate;
+@property (strong, nonatomic) NSString *lastDate;
 @property (strong, nonatomic) id<MonthDayClick> delegate;
 @property (strong, nonatomic) NSDictionary *curDate;
+@property (strong, nonatomic) NSMutableArray *allDay;
+
 - (void)updateCalendarWithMonth:(int)month withYear:(int)year;
 
 @end

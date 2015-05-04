@@ -37,9 +37,11 @@
     [NSBezierPath strokeRect:dirtyRect];
 }
 
-- (id)initWithFrame:(NSRect)frameRect andDayText:(NSString *)dayText {
+- (id)initWithFrame:(NSRect)frameRect andDayText:(NSString *)dayText andMonth:(int)month andYear:(int)year {
     if (self = [super initWithFrame:frameRect]) {
         self.dayText = dayText;
+        self.month = month;
+        self.year = year;
         [self initLabel];
     }
     return self;
@@ -67,7 +69,7 @@
     float height = self.frame.size.height;
     
     float kPadding = 2;
-    float kSize = (width - kPadding * 3) / 4;
+    float kSize = (width - kPadding * 5) / 4;
     
     self.dayTF = [[NSTextField alloc] initWithFrame:NSMakeRect(0, height / 3 * 2 - 7, width - 10, height / 3)];
     self.dayTF.font = [NSFont systemFontOfSize:15];
@@ -79,25 +81,57 @@
     self.dayTF.alignment = NSRightTextAlignment;
     [self addSubview:self.dayTF];
     
-    self.listenView = [[Circle alloc] initWithFrame:NSMakeRect(0, 0, kSize, kSize) andColor:[NSColor greenColor]];
-    //[self addSubview:self.listenView];
+    self.listenView = [[Circle alloc] initWithFrame:NSMakeRect(kPadding, 5, kSize, kSize) andType:@"听" andColor:[NSColor greenColor]];
+    self.listenView.hidden = YES;
+    [self addSubview:self.listenView];
     
-    self.speakView = [[Circle alloc] initWithFrame:NSMakeRect(kSize + kPadding, 0, kSize, kSize) andColor:[NSColor blueColor]];
-    //[self addSubview:self.speakView];
+    self.speakView = [[Circle alloc] initWithFrame:NSMakeRect(kSize + kPadding * 2, 5, kSize, kSize) andType:@"说" andColor:[NSColor blueColor]];
+    self.speakView.hidden = YES;
+    [self addSubview:self.speakView];
     
-    self.readView = [[Circle alloc] initWithFrame:NSMakeRect((kSize + kPadding) * 2, 0, kSize, kSize) andColor:[NSColor redColor]];
-    //[self addSubview:self.readView];
+    self.readView = [[Circle alloc] initWithFrame:NSMakeRect(kSize * 2 + kPadding * 3, 5, kSize, kSize) andType:@"读" andColor:[NSColor redColor]];
+    self.readView.hidden = YES;
+    [self addSubview:self.readView];
     
-    self.writeView = [[Circle alloc] initWithFrame:NSMakeRect((kSize + kPadding) * 3, 0, kSize, kSize) andColor:[NSColor yellowColor]];
-    //[self addSubview:self.writeView];
+    self.writeView = [[Circle alloc] initWithFrame:NSMakeRect(kSize * 3 + kPadding * 4, 5, kSize, kSize) andType:@"写" andColor:[NSColor yellowColor]];
+    self.writeView.hidden = YES;
+    [self addSubview:self.writeView];
 }
 // 与系统日期一致的今天 特殊标记
 - (void)addCircleToCurDate:(int)day {
     self.dayTF.stringValue = @"日";
     self.dayTF.frame = NSMakeRect(0, self.dayTF.frame.origin.y, self.dayTF.frame.size.width + 7, self.dayTF.frame.size.height);
-    Circle *circle = [[Circle alloc] initWithFrame:NSMakeRect(self.frame.size.width * 0.68, self.frame.size.height / 3 * 2, 30, 30) andColor:[NSColor redColor]];
+    Circle *circle = [[Circle alloc] initWithFrame:NSMakeRect(self.frame.size.width * 0.68, self.frame.size.height / 3 * 2, 30, 30) andType:@"" andColor:[NSColor redColor]];
     circle.circleText = [NSString stringWithFormat:@"%i", day];
     [self addSubview:circle];
+}
+
+- (void)showWithLessonType:(NSMutableArray *)lessonTypes {
+    NSMutableArray *circleArr = [[NSMutableArray alloc] init];
+    [circleArr addObject:self.listenView];
+    [circleArr addObject:self.speakView];
+    [circleArr addObject:self.readView];
+    [circleArr addObject:self.writeView];
+    for (int i = 0; i < lessonTypes.count; i++) {
+        for (int j = 0; j < circleArr.count; j++) {
+            NSLog(@"%@", ((Circle *)circleArr[j]).circleType);
+            if ([lessonTypes[i] isEqualToString:((Circle *)circleArr[j]).circleType]) {
+                ((Circle *)circleArr[j]).hidden = NO;
+            }
+        }
+    }
+}
+
+- (void)showWithType:(NSString *)type {
+    if ([type isEqualToString:@"听"]) {
+        self.listenView.hidden = NO;
+    } else if ([type isEqualToString:@"说"]) {
+        self.speakView.hidden = NO;
+    } else if ([type isEqualToString:@"读"]) {
+        self.readView.hidden = NO;
+    } else if ([type isEqualToString:@"写"]) {
+        self.writeView.hidden = NO;
+    }
 }
 
 @end

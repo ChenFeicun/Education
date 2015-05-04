@@ -10,6 +10,10 @@
 
 @interface PickViewController : NSViewController
 
-@property (nonatomic) int lessonType;
+//传入时间段
+@property (nonatomic) int startHour;//开始小时
+@property (nonatomic) int endHour;//结束小时
+@property (nonatomic) NSString *lessonType;
+@property (strong, nonatomic) NSString *date;
 
 @end

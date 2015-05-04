@@ -18,13 +18,13 @@
 @interface FuncBlockView : NSView
 
 @property (strong, nonatomic) id<BlockClick> delegate;
-@property (nonatomic) int type;//听说读写
+@property (nonatomic) NSString *type;//听说读写
 @property (nonatomic) int time;//几点
 @property (nonatomic) BOOL isSelected;//是否被选择
 
 //@property (nonatomic) BOOL isClick;//是否被点击(只有在第一次被选中的情况下才算被点击)
 //@property (nonatomic) NSPoint curPoint;//当前鼠标所在坐标
 
-- (id)initWithFrame:(NSRect)frameRect withType:(int)type andEditable:(BOOL)isEditable;
+- (id)initWithFrame:(NSRect)frameRect withType:(NSString *)type andEditable:(BOOL)isEditable;
 - (void)didSelected:(BOOL)selected;//改变Block的状态
 @end

@@ -7,9 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "DayView.h"
+#import "User.h"
 
 @interface DayDetailViewController : NSViewController
 
 @property (strong, nonatomic) NSDictionary *dateDict; //上个页面传递来的 Day信息
 @property (nonatomic) BOOL isEditable;//页面信息是否可编辑 根据日期来
+@property (strong, nonatomic) User *teacher;
+
 @end

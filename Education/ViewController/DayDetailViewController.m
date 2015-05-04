@@ -9,6 +9,8 @@
 #import "DayDetailViewController.h"
 #import "FuncBlockView.h"
 #import "PickViewController.h"
+#import "TimeBlock.h"
+#import "Lesson.h"
 
 @interface DayDetailViewController () <BlockClick>
 
@@ -21,27 +23,50 @@
 @property (strong, nonatomic) NSMutableArray *writeArray;
 @property (strong, nonatomic) NSMutableDictionary *timeArray;//时间字典 1-24  YES/NO YES代表没选择课程
 
+//临时存储选时间时的区间
+@property (nonatomic) int firstHour;
+@property (nonatomic) int lastHour;
+
+//保存所选课程
+@property (strong, nonatomic) NSMutableArray *lessonArray;
 
 @end
 
 @implementation DayDetailViewController
+
+#warning 如果上课时间为 8:00-10:20 10:30-  那选课就会出现问题
 
 #pragma -mark 界面初始化
 - (void)viewDidLoad {
     [super viewDidLoad];
     NSString *titleStr = [NSString stringWithFormat:@"%@年%@月%@日", [self.dateDict objectForKey:@"Year"], [self.dateDict objectForKey:@"Month"], [self.dateDict objectForKey:@"Day"]];
     self.title = titleStr;
+    
+    self.lessonArray = [[NSMutableArray alloc] init];
+    
     [self initHours];
-    self.listenArray = [self funcArrayWithType:1];
-    self.speakArray = [self funcArrayWithType:2];
-    self.readArray = [self funcArrayWithType:3];
-    self.writeArray =[self funcArrayWithType:4];
+    self.listenArray = [self funcArrayWithType:@"听" andIndex:1];
+    self.speakArray = [self funcArrayWithType:@"说" andIndex:2];
+    self.readArray = [self funcArrayWithType:@"读" andIndex:3];
+    self.writeArray =[self funcArrayWithType:@"写" andIndex:4];
     self.timeArray = [[NSMutableDictionary alloc] init];
+    
     for (int i = 0; i < 24; i++) {
-        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i + 1]];
+        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
     }
     
     [self initButton];
+    
+    if (self.teacher) {
+        [self loadLessonDataFromCloud];
+        if (self.lessonArray.count) {
+            [self initViewWithData];
+        }
+    }
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lessonConfirmed:) name:@"LessonConfirmed" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lessonCancel:) name:@"LessonCancel" object:nil];
+    
     // Do view setup here.
 }
 //初始化 所有按钮  页面可/不可编辑 两种状态
@@ -86,44 +111,73 @@
     }
 }
 
+- (void)initViewWithData {
+    for (Lesson *lesson in self.lessonArray) {
+        NSMutableArray *typeArr = [self getFuncArrayByType:lesson.lessonType];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"HH"];
+        int start = [[formatter stringFromDate:lesson.startTime] intValue];
+        int end = [[formatter stringFromDate:lesson.endTime] intValue];
+        for (int i = start; i <= end; i++) {
+            [((FuncBlockView *)typeArr[23 -i]) didSelected:YES];
+            [self.timeArray setObject:[NSNumber numberWithBool:NO] forKey:[NSString stringWithFormat:@"%i", i]];
+        }
+    }
+}
+
+//从云端读取数据  然后初始化 FuncBlock
+- (void)loadLessonDataFromCloud {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+    NSString *dateStr = [NSString stringWithFormat:@"%@-%02i-%02i", [self.dateDict objectForKey:@"Year"], [[self.dateDict objectForKey:@"Month"] intValue], [[self.dateDict objectForKey:@"Day"] intValue]];
+    NSDate *start = [dateFormatter dateFromString:[NSString stringWithFormat:@"%@ 00:00:00", dateStr]];
+     NSDate *end = [dateFormatter dateFromString:[NSString stringWithFormat:@"%@ 23:59:59", dateStr]];
+    //nsdate *start = []
+    AVQuery *query = [AVQuery queryWithClassName:@"Lesson"];
+    [query whereKey:@"startTime" greaterThan:start];
+    [query whereKey:@"endTime" lessThan:end];
+    [query whereKey:@"teacher" equalTo:self.teacher.objectId];
+    NSArray *lesArr = [query findObjects];
+    for (AVObject *obj in lesArr) {
+        Lesson *lesson = [[Lesson alloc] initWithCloudLesson:obj andTeacher:self.teacher];
+        [self.lessonArray addObject:lesson];
+    }
+    //self.lessonArray = [[NSMutableArray alloc] initWithArray:[query findObjects]];
+}
+
 #warning 从数据库读取
 //听说读写 四列块的初始化
-- (NSMutableArray *)funcArrayWithType:(int)type {
+- (NSMutableArray *)funcArrayWithType:(NSString *)type andIndex:(int)index {
     NSMutableArray *array = [[NSMutableArray alloc] init];
     for (int i = 0; i < 24; i++) {
-        FuncBlockView *func = [[FuncBlockView alloc] initWithFrame:NSMakeRect(100 * type, SCREEN_HEIGHT / 24 * i - i, 100, SCREEN_HEIGHT / 24) withType:type andEditable:self.isEditable];
+        FuncBlockView *func = [[FuncBlockView alloc] initWithFrame:NSMakeRect(100 * index, SCREEN_HEIGHT / 24 * i - i, 100, SCREEN_HEIGHT / 24) withType:type andEditable:self.isEditable];
         func.delegate = self;
-        func.time = 24 - i;
+        func.time = 23 - i;
         [array addObject:func];
         [self.view addSubview:func];
     }
     return array;
 }
 //根据块类型返回相应Array
-- (NSMutableArray *)getFuncArrayByType:(int)type {
-    switch (type) {
-        case 1:
-            return self.listenArray;
-            break;
-        case 2:
-            return self.speakArray;
-            break;
-        case 3:
-            return self.readArray;
-            break;
-        case 4:
-            return self.writeArray;
-            break;
-        default:
-            return nil;
-            break;
+- (NSMutableArray *)getFuncArrayByType:(NSString *)type {
+    if ([type isEqualToString:@"听"]) {
+        return self.listenArray;
+    } else if ([type isEqualToString:@"说"]) {
+        return self.speakArray;
+    } else if ([type isEqualToString:@"读"]) {
+        return self.readArray;
+    } else if ([type isEqualToString:@"写"]) {
+        return self.writeArray;
     }
+    return nil;
 }
 //24小时的初始化
 - (void)initHours {
     for (int i = 0; i < 24; i++) {
+//        TimeBlock *tb = [[TimeBlock alloc] initWithFrame:NSMakeRect(0, SCREEN_HEIGHT / 24 * i - i, 100, SCREEN_HEIGHT / 24)];
+//        [self.view addSubview:tb];
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, SCREEN_HEIGHT / 24 * i - i, 100, SCREEN_HEIGHT / 24)];
-        tf.stringValue = [NSString stringWithFormat:@"%i:00", 24 - i];
+        tf.stringValue = [NSString stringWithFormat:@"%i:00", 23 - i];
         tf.font = [NSFont systemFontOfSize:15];
         tf.backgroundColor = [NSColor whiteColor];
         tf.editable = NO;
@@ -137,7 +191,21 @@
 #pragma -mark 按钮相应函数
 //四列的重置 根据tag(type)来重置
 - (void)eachReset:(NSButton *)sender {
-    NSMutableArray *column = [self getFuncArrayByType:(int)sender.tag];
+    NSString *type = @"";
+    switch ((int)sender.tag) {
+        case 1:
+            type = @"听";
+            break;
+        case 2:
+            type = @"说";
+        case 3:
+            type = @"读";
+        case 4:
+            type = @"写";
+        default:
+            break;
+    }
+    NSMutableArray *column = [self getFuncArrayByType:type];
     for (FuncBlockView *func in column) {
         if (func.isSelected) {
             [func didSelected:NO];
@@ -152,7 +220,7 @@
 //重置所有
 - (void)resetAll:(NSButton *)sender {
     for (int i = 0; i < 24; i++) {
-        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i + 1]];
+        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
         FuncBlockView *bv = self.listenArray[i];
         [bv didSelected:NO];
         bv = self.speakArray[i];
@@ -162,9 +230,34 @@
         bv = self.writeArray[i];
         [bv didSelected:NO];
     }
+    [self.lessonArray removeAllObjects];
 }
 //保存
 - (void)saveChange:(NSButton *)sender {
+#warning 这里发送通知给学生
+//    iOS端 需要在注册installation时添加用户
+//    AVInstallation *installation = [AVInstallation currentInstallation];
+//    [installation setObject:[AVUser currentUser] forKey:@"owner"];
+//    [installation saveInBackground];
+    
+//    AVQuery *pushQuery = [AVInstallation query];
+//    [pushQuery whereKey:@"objectId" containedIn:nil];
+//    
+//    // Send push notification to query
+//    AVPush *push = [[AVPush alloc] init];
+//    [push setQuery:pushQuery]; // Set our Installation query
+//    [push setMessage:@"你有新的课程"];
+//    [push sendPushInBackground];
+    NSMutableArray *typeArr = [[NSMutableArray alloc] init];
+    for (Lesson *les in self.lessonArray) {
+        [les uploadToCloud];
+        if (![typeArr containsObject:les.lessonType]) {
+            [typeArr addObject:les.lessonType];
+        }
+    }
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:typeArr, @"LessonTypes", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ChosenLesson" object:nil userInfo:dic];
+    
     [self dismissViewController:self];
 }
 
@@ -184,6 +277,12 @@
                 if ([[self.timeArray objectForKey:[NSString stringWithFormat:@"%i", block.time]] boolValue]) {
                     [block didSelected:YES];
                     [self.timeArray setObject:[NSNumber numberWithBool:NO] forKey:[NSString stringWithFormat:@"%i", block.time]];
+                    if (block.time > self.lastHour) {
+                        self.lastHour = block.time;
+                    }
+                    if (block.time < self.firstHour) {
+                        self.firstHour = block.time;
+                    }
                 }
             }
         }
@@ -192,6 +291,8 @@
 
 - (void)clickBlock:(FuncBlockView *)blockView {
     self.tempBlock = blockView;
+    self.firstHour = blockView.time;
+    self.lastHour = blockView.time;
     //self.curTempBlock = blockView;
     if ([[self.timeArray objectForKey:[NSString stringWithFormat:@"%i", self.tempBlock.time]] boolValue] && !blockView.isSelected) {
         [self.timeArray setObject:[NSNumber numberWithBool:NO] forKey:[NSString stringWithFormat:@"%i", self.tempBlock.time]];
@@ -205,9 +306,37 @@
 - (void)prepareForSegue:(NSStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"PickTAndS"]) {
         PickViewController *pick = segue.destinationController;
+        NSString *date = [NSString stringWithFormat:@"%@-%02i-%02i", [self.dateDict objectForKey:@"Year"], [[self.dateDict objectForKey:@"Month"] intValue], [[self.dateDict objectForKey:@"Day"] intValue]];
+        pick.date = date;
         pick.lessonType = self.tempBlock.type;
+        pick.startHour = self.firstHour;
+        pick.endHour = self.lastHour;
     }
+}
 
+//课程确认
+- (void)lessonConfirmed:(NSNotification *)notification {
+    Lesson *lesson = [notification.userInfo objectForKey:@"Lesson"];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString *strDate = [dateFormatter stringFromDate:lesson.startTime];
+    NSLog(@"%@, %@", strDate, lesson.teacher.username);
+    //最后一个就是最新添加的课程
+    [self.lessonArray addObject:lesson];
+}
+
+- (void)lessonCancel:(NSNotification *)notification {
+    NSDictionary *dict = notification.userInfo;
+    NSMutableArray *arr = [self getFuncArrayByType:[dict objectForKey:@"LessonType"]];
+    int start = [[dict objectForKey:@"Start"] intValue];
+    int end = [[dict objectForKey:@"End"] intValue];
+    dispatch_async(dispatch_get_main_queue(), ^{
+    for (int i = start; i <= end; i++) {
+            FuncBlockView *func = arr[i];
+            [func didSelected:NO];
+            [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
+        }
+    });
 }
 
 @end

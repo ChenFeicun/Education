@@ -30,25 +30,19 @@
     // Drawing code here.
 }
 
-- (id)initWithFrame:(NSRect)frameRect withType:(int)type andEditable:(BOOL)isEditable {
+- (id)initWithFrame:(NSRect)frameRect withType:(NSString *)type andEditable:(BOOL)isEditable {
     if (self = [super initWithFrame:frameRect]) {
         //self.isSelected = NO;
         self.isEditable = isEditable;
         self.type = type;
-        switch (self.type) {
-            case 1:
-                self.blockColor = [NSColor greenColor];
-                break;
-            case 2:
-                self.blockColor = [NSColor redColor];
-                break;
-            case 3:self.blockColor = [NSColor blueColor];
-                break;
-            case 4:
-                self.blockColor = [NSColor yellowColor];
-                break;
-            default:
-                break;
+        if ([type isEqualToString:@"听"]) {
+            self.blockColor = [NSColor greenColor];
+        } else if ([type isEqualToString:@"说"]) {
+            self.blockColor = [NSColor redColor];
+        } else if ([type isEqualToString:@"读"]) {
+            self.blockColor = [NSColor blueColor];
+        } else if ([type isEqualToString:@"写"]) {
+            self.blockColor = [NSColor yellowColor];
         }
     }
     return self;

@@ -40,7 +40,7 @@
 
 - (void)updateCalendarWithMonth:(int)month withYear:(int)year {
     //当前月
-    NSMutableArray *allDay = [[NSMutableArray alloc] init];
+    self.allDay = [[NSMutableArray alloc] init];
     int firstDay = [self getWeekdayWithMonth:month withDay:1 withYear:year];
     int monthLength = [self getMonthLength:month withYear:year];
     for (int day = 1, weekday = firstDay, i = 5; day <= monthLength && i >= 0; i--) {
@@ -48,17 +48,21 @@
             NSString *dayText = @"";
             if (day == 1) {
                 dayText = [NSString stringWithFormat:@"%i月%i日", month, day];
+                self.firstDate = [NSString stringWithFormat:@"%i-%02i-01", year, month];
             } else {
                 dayText = [NSString stringWithFormat:@"%i日", day];
+                if (day == monthLength) {
+                    self.lastDate = [NSString stringWithFormat:@"%i-%02i-%02i", year, month, monthLength];
+                }
             }
-            DayView *dayView = [[DayView alloc] initWithFrame:NSMakeRect(DAY_WIDTH * (weekday - 1) - (weekday - 1), i * DAY_HEIGHT - i, DAY_WIDTH, DAY_HEIGHT) andDayText:dayText];
+            DayView *dayView = [[DayView alloc] initWithFrame:NSMakeRect(DAY_WIDTH * (weekday - 1) - (weekday - 1), i * DAY_HEIGHT - i, DAY_WIDTH, DAY_HEIGHT) andDayText:dayText andMonth:month andYear:year];
             dayView.state = 0;
             dayView.day = day;
             dayView.delegate = self;
             if ([self isToday:day month:month year:year]) {
                 [dayView addCircleToCurDate:day];
             }
-            [allDay addObject:dayView];
+            [self.allDay addObject:dayView];
             //NSLog(@"%i", day);
         }
         weekday = 1;
@@ -73,35 +77,63 @@
     }
     
     for (int i = 0; i < firstDay - 1; i++, previous++) {
+        int preMonth = month;
+        int preYear = year;
+        if (month == 1 && i == 0) {
+            preMonth = 12;
+            preYear = year - 1;
+            self.firstDate = [NSString stringWithFormat:@"%i-12-%02i", preYear, previous];
+        } else if (month != 1 && i == 0) {
+            preMonth = month - 1;
+            self.firstDate = [NSString stringWithFormat:@"%i-%02i-%02i", year, preMonth, previous];
+        }
         NSString *dayText = [NSString stringWithFormat:@"%i日", previous];
-        DayView *dayView = [[DayView alloc] initWithFrame:NSMakeRect(DAY_WIDTH * i - i, DAY_HEIGHT * 5 - 5, DAY_WIDTH, DAY_HEIGHT) andDayText:dayText];
+        DayView *dayView = [[DayView alloc] initWithFrame:NSMakeRect(DAY_WIDTH * i - i, DAY_HEIGHT * 5 - 5, DAY_WIDTH, DAY_HEIGHT) andDayText:dayText andMonth:preMonth andYear:preYear];
         dayView.state = -1;
         dayView.day = previous;
         dayView.alphaValue = 0.3;
         dayView.delegate = self;
-        [allDay addObject:dayView];
+        [self.allDay addObject:dayView];
     }
     //下个月
     int leastDays = monthLength - (8 - firstDay);
     for(int i = 4 - leastDays / 7, count = 1, j = leastDays % 7; i >= 0; i--){
         for(; j < 7; j++, count++){
+            int nextMonth = month;
+            int nextYear = year;
             NSString *dayText = @"";
-            if (i == 1) {
-                dayText = [NSString stringWithFormat:@"%i月%i日", month + 1, count];
+            if (count == 1) {
+                if (month == 12) {
+                    nextMonth = 1;
+                    nextYear = year + 1;
+                    dayText = [NSString stringWithFormat:@"1月%i日", count];
+                } else {
+                    nextMonth = month + 1;
+                    dayText = [NSString stringWithFormat:@"%i月%i日", month + 1, count];
+                }
             } else {
+                nextMonth = month + 1;
                 dayText = [NSString stringWithFormat:@"%i日", count];
             }
-            DayView *dayView = [[DayView alloc] initWithFrame:NSMakeRect(DAY_WIDTH * j - j, DAY_HEIGHT * i - i, DAY_WIDTH, DAY_HEIGHT) andDayText:dayText];
+            DayView *dayView = [[DayView alloc] initWithFrame:NSMakeRect(DAY_WIDTH * j - j, DAY_HEIGHT * i - i, DAY_WIDTH, DAY_HEIGHT) andDayText:dayText andMonth:nextMonth andYear:nextYear];
             dayView.state = 1;
             dayView.day = count;
             dayView.alphaValue = 0.3;
             dayView.delegate = self;
-            [allDay addObject:dayView];
+            [self.allDay addObject:dayView];
         }
         j = 0;
     }
+    if (35 - leastDays != 0) {
+        if (month == 12) {
+            self.lastDate = [NSString stringWithFormat:@"%i-01-%02i", year + 1, 35 - leastDays];
+        } else {
+            self.lastDate = [NSString stringWithFormat:@"%i-%02i-%02i", year, month + 1, 35 - leastDays];
+        }
+        
+    }
     
-    [self setSubviews:allDay];
+    [self setSubviews:self.allDay];
 }
 
 - (NSDictionary *)getCurrentMonthDayYear{

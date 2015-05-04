@@ -674,11 +674,25 @@
                     </view>
                     <connections>
                         <segue destination="6dH-OT-zKo" kind="modal" identifier="DayDetail" id="LDC-Oj-Suy"/>
+                        <segue destination="BgE-Ub-wfX" kind="modal" identifier="SelectTeacher" id="55B-Em-Cl3"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75.5" y="830.5"/>
+        </scene>
+        <!--Select Teacher View Controller-->
+        <scene sceneID="u03-uW-jN6">
+            <objects>
+                <viewController id="BgE-Ub-wfX" customClass="SelectTeacherViewController" sceneMemberID="viewController">
+                    <view key="view" id="lDl-gE-Yno">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="w9g-g5-lOH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="969" y="831"/>
         </scene>
         <!--Day Detail View Controller-->
         <scene sceneID="aHe-MK-WA3">
@@ -701,13 +715,13 @@
             <objects>
                 <viewController id="Nmp-aV-Mwq" customClass="PickViewController" sceneMemberID="viewController">
                     <view key="view" id="Ptu-zL-ycE">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="935" height="597"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </view>
                 </viewController>
                 <customObject id="87s-7m-mYr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="833" y="1446"/>
+            <point key="canvasLocation" x="1258.5" y="1594.5"/>
         </scene>
     </scenes>
 </document>

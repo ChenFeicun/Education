@@ -45,8 +45,9 @@
     [context restoreGraphicsState];
 }
 
-- (id)initWithFrame:(NSRect)frameRect andColor:(NSColor *)color {
+- (id)initWithFrame:(NSRect)frameRect andType:(NSString *)type andColor:(NSColor *)color {
     if (self = [super initWithFrame:frameRect]) {
+        self.circleType = type;
         self.circleColor = color;
     }
     return self;

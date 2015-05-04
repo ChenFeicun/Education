@@ -11,6 +11,8 @@
 @interface Circle : NSView
 
 @property (strong, nonatomic) NSString *circleText;
-- (id)initWithFrame:(NSRect)frameRect andColor:(NSColor *)color;
+@property (strong, nonatomic) NSString *circleType;
+
+- (id)initWithFrame:(NSRect)frameRect andType:(NSString *)type andColor:(NSColor *)color;
 
 @end

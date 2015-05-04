@@ -20,8 +20,13 @@
 @property (nonatomic) int state;
 @property (nonatomic) int day;
 @property (strong, nonatomic) NSString *dayText;
+@property (nonatomic) int year;
+@property (nonatomic) int month;
 
-- (id)initWithFrame:(NSRect)frameRect andDayText:(NSString *)dayText;
+
+- (id)initWithFrame:(NSRect)frameRect andDayText:(NSString *)dayText andMonth:(int)month andYear:(int)year;
 - (void)addCircleToCurDate:(int)day;
+- (void)showWithLessonType:(NSMutableArray *)lessonTypes;
+- (void)showWithType:(NSString *)type;
 
 @end
