@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import "DayView.h"
-#import "User.h"
 
 @interface DayDetailViewController : NSViewController
 

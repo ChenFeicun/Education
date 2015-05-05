@@ -9,8 +9,6 @@
 #import "ViewController.h"
 #import "MonthView.h"
 #import "HeadView.h"
-#import "User.h"
-#import "Lesson.h"
 #import "DayDetailViewController.h"
 
 @interface ViewController() <ToadyClick, MonthDayClick>
@@ -64,6 +62,7 @@
     self.teacher = [notification.userInfo objectForKey:@"Teacher"];
     NSLog(@"%@", self.teacher.username);
     self.tchLessonArray = [[NSMutableArray alloc] init];
+    [self.monthView updateCalendarWithMonth:self.month withYear:self.year];
     [self initViewWithData];
 }
 
@@ -85,7 +84,6 @@
     [self.tchLessonArray removeAllObjects];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-//    NSString *dateStr = [NSString stringWithFormat:@"%@-%02i-%02i", [self.dateDict objectForKey:@"Year"], [[self.dateDict objectForKey:@"Month"] intValue], [[self.dateDict objectForKey:@"Day"] intValue]];
     NSDate *start = [dateFormatter dateFromString:[NSString stringWithFormat:@"%@ 00:00:00", self.monthView.firstDate]];
     NSDate *end = [dateFormatter dateFromString:[NSString stringWithFormat:@"%@ 23:59:59", self.monthView.lastDate]];
     //nsdate *start = []
@@ -178,6 +176,9 @@
         }
         [self.monthView updateCalendarWithMonth:self.month withYear:self.year];
         [self setHeadDate];
+        if (self.teacher) {
+            [self initViewWithData];
+        }
     } else if (dayView.state == 1) {
         if (self.month >= 12) {
             self.month = 1;
@@ -187,6 +188,9 @@
         }
         [self.monthView updateCalendarWithMonth:self.month withYear:self.year];
         [self setHeadDate];
+        if (self.teacher) {
+            [self initViewWithData];
+        }
     } else {
 //        if ([self isEditable:dayView.day]) {
 //            NSLog(@"OK!!!!!!");

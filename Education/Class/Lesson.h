@@ -22,5 +22,7 @@
 - (instancetype)initWithCloudLesson:(AVObject *)lesson;
 - (id)initWithCloudLesson:(AVObject *)lesson andTeacher:(User *)teacher;
 - (void)uploadToCloud;
+- (void)deleteFromCloud;
+- (NSMutableArray *)getStudentsIdOfLesson;
 
 @end

@@ -13,7 +13,9 @@
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 
 #import <AVOSCloud/AVOSCloud.h>
- 
+#import "User.h"
+#import "Lesson.h"
+
 #define SCREEN_HEIGHT 598
 //[NSScreen mainScreen].frame.size.height
 #define SCREEN_WIDTH 935

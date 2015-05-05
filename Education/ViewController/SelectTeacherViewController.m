@@ -7,7 +7,6 @@
 //
 
 #import "SelectTeacherViewController.h"
-#import "User.h"
 #import "CollectionItem.h"
 
 @interface SelectTeacherViewController ()
@@ -18,6 +17,7 @@
 //用于检索 联想时用  存名字
 @property (strong, nonatomic) NSMutableArray *tchSchArr;
 @property (strong, nonatomic) User *selTch;
+
 @end
 
 @implementation SelectTeacherViewController
@@ -74,16 +74,21 @@
 
 - (void)itemClick:(NSNotification *)notification {
     self.selTch = [notification.userInfo objectForKey:@"User"];
-    for (NSMutableDictionary *dict in self.teacherArray) {
-        User *tchUser = [dict objectForKey:@"User"];
-        //NSLog(@"%@", tchUser.username);
-        if ([self.selTch.username isEqualTo:tchUser.username]) {
-            //tchUser.isSelected = self.selTch.isSelected;
-        } else {
-            tchUser.isSelected = NO;
-            self.selTch.isSelected = NO;
-        }
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"DisOtherItem" object:nil userInfo:notification.userInfo];
+    } @catch (NSException *exception) {
+        NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
     }
+//    for (NSMutableDictionary *dict in self.teacherArray) {
+//        User *tchUser = [dict objectForKey:@"User"];
+//        //NSLog(@"%@", tchUser.username);
+//        if ([self.selTch.username isEqualTo:tchUser.username]) {
+//            //tchUser.isSelected = self.selTch.isSelected;
+//        } else {
+//            tchUser.isSelected = NO;
+//            self.selTch.isSelected = NO;
+//        }
+//    }
 
 }
 
@@ -111,6 +116,8 @@
     [self.view addSubview:self.teacherSearch];
 }
 
+//实现单选  点击item 发送通知传入item信息   接收通知后 返回一个通知 回传给所有item  将之前选择的item清空
+#warning 联想过后 点击会出问题
 - (void)searchTeacher:(id)sender {
     NSMutableArray *tempArr = [[NSMutableArray alloc] initWithArray:self.tchSchArr];
     if ([self.teacherSearch.stringValue isEqualToString:@""] || !self.teacherSearch.stringValue) {
@@ -126,6 +133,7 @@
         }
         [self.teacherCV setContent:arr];
     }
+    NSLog(@"temArr count:%li", tempArr.count);
 }
 
 @end

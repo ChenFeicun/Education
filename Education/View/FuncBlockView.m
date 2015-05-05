@@ -11,7 +11,6 @@
 @interface FuncBlockView()
 
 @property (strong, nonatomic) NSColor *blockColor;
-@property (nonatomic) BOOL isEditable;//是否可以被编辑
 
 @end
 
@@ -52,6 +51,10 @@
     self.isSelected = selected;
     [self setNeedsDisplay:YES];
 }
+
+//- (void)setEditable:(BOOL)editable {
+//    self.isEditable = editable;
+//}
 
 - (void)mouseDown:(NSEvent *)theEvent {
     if (self.isEditable) {

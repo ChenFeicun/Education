@@ -26,6 +26,7 @@
 }
 
 - (void)initialize {
+    self.allDay = [[NSMutableArray alloc] init];
     self.curDate = [self getCurrentMonthDayYear];
     [self updateCalendarWithMonth:[[self.curDate objectForKey:@"Month"] intValue] withYear:[[self.curDate objectForKey:@"Year"] intValue]];
 }
@@ -40,7 +41,10 @@
 
 - (void)updateCalendarWithMonth:(int)month withYear:(int)year {
     //当前月
-    self.allDay = [[NSMutableArray alloc] init];
+//    for (int i = 0; i < self.allDay.count; i++) {
+//        [self.allDay[i] removeFromSuperview];
+//    }
+    [self.allDay removeAllObjects];
     int firstDay = [self getWeekdayWithMonth:month withDay:1 withYear:year];
     int monthLength = [self getMonthLength:month withYear:year];
     for (int day = 1, weekday = firstDay, i = 5; day <= monthLength && i >= 0; i--) {

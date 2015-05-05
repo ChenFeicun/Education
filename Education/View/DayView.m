@@ -85,11 +85,11 @@
     self.listenView.hidden = YES;
     [self addSubview:self.listenView];
     
-    self.speakView = [[Circle alloc] initWithFrame:NSMakeRect(kSize + kPadding * 2, 5, kSize, kSize) andType:@"说" andColor:[NSColor blueColor]];
+    self.speakView = [[Circle alloc] initWithFrame:NSMakeRect(kSize + kPadding * 2, 5, kSize, kSize) andType:@"说" andColor:[NSColor redColor]];
     self.speakView.hidden = YES;
     [self addSubview:self.speakView];
     
-    self.readView = [[Circle alloc] initWithFrame:NSMakeRect(kSize * 2 + kPadding * 3, 5, kSize, kSize) andType:@"读" andColor:[NSColor redColor]];
+    self.readView = [[Circle alloc] initWithFrame:NSMakeRect(kSize * 2 + kPadding * 3, 5, kSize, kSize) andType:@"读" andColor:[NSColor blueColor]];
     self.readView.hidden = YES;
     [self addSubview:self.readView];
     

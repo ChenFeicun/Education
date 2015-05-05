@@ -41,7 +41,14 @@
     for (AVObject *obj in stuArr) {
         [self.students addObject:[[User alloc] initWithAVUser:(AVUser *)obj]];
     }
+}
 
+- (NSMutableArray *)getStudentsIdOfLesson {
+    NSMutableArray *stuId = [[NSMutableArray alloc] init];
+    for (User *stu in self.students) {
+        [stuId addObject:stu.objectId];
+    }
+    return stuId;
 }
 
 - (void)uploadToCloud {
@@ -56,6 +63,13 @@
     [object setObject:stuArr forKey:@"students"];
     [object setObject:self.teacher.objectId forKey:@"teacher"];
     [object saveInBackground];
+}
+
+- (void)deleteFromCloud {
+    AVQuery *query = [AVQuery queryWithClassName:@"Lesson"];
+    AVObject *obj = [query getObjectWithId:self.objectId];
+    [obj delete];
+    
 }
 
 @end

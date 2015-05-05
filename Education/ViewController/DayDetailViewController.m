@@ -9,8 +9,6 @@
 #import "DayDetailViewController.h"
 #import "FuncBlockView.h"
 #import "PickViewController.h"
-#import "TimeBlock.h"
-#import "Lesson.h"
 
 @interface DayDetailViewController () <BlockClick>
 
@@ -29,6 +27,9 @@
 
 //保存所选课程
 @property (strong, nonatomic) NSMutableArray *lessonArray;
+@property (strong, nonatomic) Lesson *selectLesson;
+//传递给下个页面的操作类型 Edit  Add  Check
+@property (strong, nonatomic) NSString *passType;
 
 @end
 
@@ -41,6 +42,8 @@
     [super viewDidLoad];
     NSString *titleStr = [NSString stringWithFormat:@"%@年%@月%@日", [self.dateDict objectForKey:@"Year"], [self.dateDict objectForKey:@"Month"], [self.dateDict objectForKey:@"Day"]];
     self.title = titleStr;
+    
+    if (self.teacher) {
     
     self.lessonArray = [[NSMutableArray alloc] init];
     
@@ -66,7 +69,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lessonConfirmed:) name:@"LessonConfirmed" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lessonCancel:) name:@"LessonCancel" object:nil];
-    
+    }
     // Do view setup here.
 }
 //初始化 所有按钮  页面可/不可编辑 两种状态
@@ -106,8 +109,6 @@
             columnReset.tag = i;
             [self.view addSubview:columnReset];
         }
-    } else {
-        
     }
 }
 
@@ -119,7 +120,9 @@
         int start = [[formatter stringFromDate:lesson.startTime] intValue];
         int end = [[formatter stringFromDate:lesson.endTime] intValue];
         for (int i = start; i <= end; i++) {
-            [((FuncBlockView *)typeArr[23 -i]) didSelected:YES];
+            FuncBlockView *temp = (FuncBlockView *)typeArr[23 - i];
+            [temp didSelected:YES];
+            temp.isEditable = NO;
             [self.timeArray setObject:[NSNumber numberWithBool:NO] forKey:[NSString stringWithFormat:@"%i", i]];
         }
     }
@@ -261,9 +264,93 @@
     [self dismissViewController:self];
 }
 
+- (Lesson *)getLessonFromBlock:(FuncBlockView *)block {
+    for (Lesson *lesson in self.lessonArray) {
+        if ([block.type isEqualToString:lesson.lessonType]) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"HH"];
+            int start = [[formatter stringFromDate:lesson.startTime] intValue];
+            int end = [[formatter stringFromDate:lesson.endTime] intValue];
+            if (block.time >= start && block.time <= end) {
+                return lesson;
+            }
+        }
+    }
+    return nil;
+}
+
 #pragma -mark 鼠标事件
+//右键菜单 只在选定的课程Block中响应
+- (void)rightMouseDown:(NSEvent *)theEvent {
+    NSArray *typeArr = [[NSArray alloc] initWithObjects:@"听", @"说", @"读", @"写", nil];
+    //NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:self.listenArray, @"听", self.speakArray, @"说", self.readArray, @"读", self.writeArray, @"写", nil];
+    NSPoint point = [theEvent locationInWindow];
+    BOOL findBlock = NO;
+    for (NSString *type in typeArr) {
+        NSMutableArray *arr = [self getFuncArrayByType:type];
+        for (FuncBlockView *block in arr) {
+            NSPoint curPoint = NSMakePoint(point.x - block.frame.origin.x, point.y - block.frame.origin.y);
+            if (CGRectContainsPoint(block.bounds, curPoint)) {
+                if (!block.isEditable) {
+                    //说明此处有课
+                    findBlock = YES;
+                    self.selectLesson = [self getLessonFromBlock:block];
+                    [self popUpRightMenu:theEvent];
+                    break;
+                }
+            }
+        }
+        if (findBlock) {
+            break;
+        }
+    }
+}
+
+//弹出右键菜单
+- (void)popUpRightMenu:(NSEvent *)theEvent {
+    NSMenu *menu = [[NSMenu alloc] init];
+    //NSMenuItem *editItem = [[NSMenuItem alloc] initWithTitle:@"修改" action:@selector(editLesson) keyEquivalent:nil];
+    [menu insertItemWithTitle:@"查看" action:@selector(checkLesson) keyEquivalent:@"" atIndex:0];
+    if (self.isEditable) {
+        [menu insertItemWithTitle:@"修改" action:@selector(editLesson) keyEquivalent:@"" atIndex:1];
+        [menu insertItemWithTitle:@"删除" action:@selector(deleteLesson) keyEquivalent:@"" atIndex:2];
+    }
+    [NSMenu popUpContextMenu:menu withEvent:theEvent forView:self.view];
+}
+
+- (void)deleteLesson {
+    //[self.selectLesson deleteFromCloud];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"HH"];
+    int start = [[formatter stringFromDate:self.selectLesson.startTime] intValue];
+    int end = [[formatter stringFromDate:self.selectLesson.endTime] intValue];
+    NSMutableArray *arr = [self getFuncArrayByType:self.selectLesson.lessonType];
+    for (int i = start; i <= end; i++) {
+        FuncBlockView *func = arr[23 - i];
+        [func didSelected:NO];
+        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
+    }
+
+    self.selectLesson = nil;
+    
+}
+
+- (void)checkLesson {
+    self.passType = @"Check";
+    [self performSegueWithIdentifier:@"PickTAndS" sender:self];
+    self.selectLesson = nil;
+}
+
+- (void)editLesson {
+    self.passType = @"Edit";
+    [self performSegueWithIdentifier:@"PickTAndS" sender:self];
+    self.selectLesson = nil;
+}
+
 - (void)mouseUp:(NSEvent *)theEvent {
     if (self.tempBlock.isSelected) {
+#warning 判断是否连续 不连续则无法添加
+        self.passType = @"Add";
         [self performSegueWithIdentifier:@"PickTAndS" sender:self];
     }
 }
@@ -311,6 +398,11 @@
         pick.lessonType = self.tempBlock.type;
         pick.startHour = self.firstHour;
         pick.endHour = self.lastHour;
+        pick.teacher = self.teacher;
+        pick.pageType = self.passType;
+        if (![self.passType isEqualToString:@"Add"]) {
+            pick.pageLesson = self.selectLesson;
+        }
     }
 }
 
@@ -330,13 +422,13 @@
     NSMutableArray *arr = [self getFuncArrayByType:[dict objectForKey:@"LessonType"]];
     int start = [[dict objectForKey:@"Start"] intValue];
     int end = [[dict objectForKey:@"End"] intValue];
-    dispatch_async(dispatch_get_main_queue(), ^{
+    //dispatch_async(dispatch_get_main_queue(), ^{
     for (int i = start; i <= end; i++) {
-            FuncBlockView *func = arr[i];
-            [func didSelected:NO];
-            [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
-        }
-    });
+        FuncBlockView *func = arr[23 - i];
+        [func didSelected:NO];
+        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
+    }
+    //});
 }
 
 @end
