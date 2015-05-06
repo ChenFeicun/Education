@@ -34,6 +34,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = self.lessonType;//[self typeToLesson:self.lessonType];
+    self.startMin = @"00";
+    self.endMin = @"00";
     [self loadDataFromCloud];
     [self initCombobox];
     if (![self.pageType isEqualToString:@"Check"]) {
@@ -47,10 +49,9 @@
 }
 
 - (void)initWithPassType {
+    self.startTF.stringValue = [NSString stringWithFormat:@"%02i:", self.startHour];
+    self.endTF.stringValue = [NSString stringWithFormat:@"%02i:", self.endHour];
     NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    [formatter setDateFormat:@"HH"];
-    self.startTF.stringValue = [[formatter stringFromDate:self.pageLesson.startTime] stringByAppendingString:@":"];
-    self.endTF.stringValue = [[formatter stringFromDate:self.pageLesson.endTime] stringByAppendingString:@":"];
     [formatter setDateFormat:@"mm"];
     [self.startCB selectItemAtIndex:[[formatter stringFromDate:self.pageLesson.startTime] intValue]];
     [self.endCB selectItemAtIndex:[[formatter stringFromDate:self.pageLesson.endTime] intValue]];
@@ -75,7 +76,6 @@
     [self dismissViewController:self];
 }
 
-#warning 学生老师这些信息 应该放在系统登录时 用一个Manager管理
 - (void)loadDataFromCloud {
     AVQuery *query = [AVUser query];
     if ([self.pageType isEqualToString:@"Check"]) {
@@ -87,30 +87,93 @@
     NSArray *arr = [query findObjects];
     self.studentArray = [[NSMutableArray alloc] init];
     self.stuSchArr = [[NSMutableArray alloc] init];
-
-    for (int i = 0; i < [arr count]; i++) {
-        AVUser *tempUser = (AVUser *)arr[i];
-        User *user = [[User alloc] initWithAVUser:tempUser];
-        NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
-        user.image = picture;
-        if (![self.pageType isEqualToString:@"Edit"]) {
-            user.isSelected = NO;
-        } else {
-            for (NSString *stuId in [self.pageLesson getStudentsIdOfLesson]) {
+ 
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    if (![self.pageType isEqualToString:@"Add"]) {
+        [dateFormatter setDateFormat:@"mm"];
+        self.startMin = [dateFormatter stringFromDate:self.pageLesson.startTime];
+        self.endMin = [dateFormatter stringFromDate:self.pageLesson.endTime];
+    }
+    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+    NSString *startStr = [NSString stringWithFormat:@"%@ %02i:%@:00", self.date, self.startHour, self.startMin];
+    NSString *endStr = [NSString stringWithFormat:@"%@ %02i:%@:00", self.date, self.endHour, self.endMin];
+    NSDate *start = [dateFormatter dateFromString:startStr];
+    NSDate *end = [dateFormatter dateFromString:endStr];
+    AVQuery *lessonsQuery = [AVQuery queryWithClassName:@"Lesson"];
+    //开始时间比 结束时间小  结束时间比开始时间大
+    [lessonsQuery whereKey:@"startTime" lessThan:end];
+    [lessonsQuery whereKey:@"endTime" greaterThan:start];
+    if (![self.pageType isEqualToString:@"Add"]) {
+        [lessonsQuery whereKey:@"objectId" notEqualTo:self.pageLesson.objectId];
+    }
+    NSArray *dayLesson = [lessonsQuery findObjects];
+    NSLog(@"%li", dayLesson.count);
+    
+#warning 应该放在云端处理
+    for (AVUser *stu in arr) {
+         User *user = [[User alloc] initWithAVUser:stu];
+        BOOL isConflict = NO;
+        for (AVObject *lesObj in dayLesson) {
+            Lesson *lesTep = [[Lesson alloc] initWithCloudLesson:lesObj];
+            for (NSString *stuId in [lesTep getStudentsIdOfLesson]) {
                 if ([user.objectId isEqualToString:stuId]) {
-                    user.isSelected = YES;
+                    //该学生有冲突
+                    isConflict = YES;
+                    NSLog(@"%@有冲突", user.username);
                     break;
                 }
             }
+            if (isConflict) {
+                break;
+            }
         }
-        NSMutableDictionary *tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:user, @"User", nil];
-        if ([self.pageType isEqualToString:@"Check"]) {
-            [tempDic setValue:@"Check" forKey:@"Check"];
+        if (!isConflict) {
+            NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
+            user.image = picture;
+            if (![self.pageType isEqualToString:@"Edit"]) {
+                user.isSelected = NO;
+            } else {
+                for (NSString *stuId in [self.pageLesson getStudentsIdOfLesson]) {
+                    if ([user.objectId isEqualToString:stuId]) {
+                        user.isSelected = YES;
+                        break;
+                    }
+                }
+            }
+            NSMutableDictionary *tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:user, @"User", nil];
+            if ([self.pageType isEqualToString:@"Check"]) {
+                [tempDic setValue:@"Check" forKey:@"Check"];
+            }
+            
+            [self.stuSchArr addObject:user];
+            [self.studentArray addObject:tempDic];
         }
-        
-        [self.stuSchArr addObject:user];
-        [self.studentArray addObject:tempDic];
     }
+    
+
+//    for (int i = 0; i < [arr count]; i++) {
+//        AVUser *tempUser = (AVUser *)arr[i];
+//        User *user = [[User alloc] initWithAVUser:tempUser];
+//        NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
+//        user.image = picture;
+//        if (![self.pageType isEqualToString:@"Edit"]) {
+//            user.isSelected = NO;
+//        } else {
+//            for (NSString *stuId in [self.pageLesson getStudentsIdOfLesson]) {
+//                if ([user.objectId isEqualToString:stuId]) {
+//                    user.isSelected = YES;
+//                    break;
+//                }
+//            }
+//        }
+//        NSMutableDictionary *tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:user, @"User", nil];
+//        if ([self.pageType isEqualToString:@"Check"]) {
+//            [tempDic setValue:@"Check" forKey:@"Check"];
+//        }
+//        
+//        [self.stuSchArr addObject:user];
+//        [self.studentArray addObject:tempDic];
+//    }
 }
 
 - (void)initCollection {
@@ -262,6 +325,9 @@
     lesson.teacher = self.teacher;
     lesson.students = selStu;
     lesson.lessonType = self.lessonType;
+    if([self.pageType isEqualToString:@"Edit"]) {
+        lesson.objectId = self.pageLesson.objectId;
+    }
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:lesson, @"Lesson", nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"LessonConfirmed" object:nil userInfo:dict];
     [self dismissViewController:self];

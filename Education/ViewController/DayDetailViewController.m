@@ -31,6 +31,8 @@
 //传递给下个页面的操作类型 Edit  Add  Check
 @property (strong, nonatomic) NSString *passType;
 
+@property (strong, nonatomic) NSMutableArray *deleteLessonArr;
+
 @end
 
 @implementation DayDetailViewController
@@ -46,7 +48,7 @@
     if (self.teacher) {
     
     self.lessonArray = [[NSMutableArray alloc] init];
-    
+    self.deleteLessonArr = [[NSMutableArray alloc] init];
     [self initHours];
     self.listenArray = [self funcArrayWithType:@"听" andIndex:1];
     self.speakArray = [self funcArrayWithType:@"说" andIndex:2];
@@ -134,11 +136,11 @@
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     NSString *dateStr = [NSString stringWithFormat:@"%@-%02i-%02i", [self.dateDict objectForKey:@"Year"], [[self.dateDict objectForKey:@"Month"] intValue], [[self.dateDict objectForKey:@"Day"] intValue]];
     NSDate *start = [dateFormatter dateFromString:[NSString stringWithFormat:@"%@ 00:00:00", dateStr]];
-     NSDate *end = [dateFormatter dateFromString:[NSString stringWithFormat:@"%@ 23:59:59", dateStr]];
+    NSDate *end = [dateFormatter dateFromString:[NSString stringWithFormat:@"%@ 23:59:59", dateStr]];
     //nsdate *start = []
     AVQuery *query = [AVQuery queryWithClassName:@"Lesson"];
-    [query whereKey:@"startTime" greaterThan:start];
-    [query whereKey:@"endTime" lessThan:end];
+    [query whereKey:@"startTime" greaterThanOrEqualTo:start];
+    [query whereKey:@"endTime" lessThanOrEqualTo:end];
     [query whereKey:@"teacher" equalTo:self.teacher.objectId];
     NSArray *lesArr = [query findObjects];
     for (AVObject *obj in lesArr) {
@@ -251,6 +253,13 @@
 //    [push setQuery:pushQuery]; // Set our Installation query
 //    [push setMessage:@"你有新的课程"];
 //    [push sendPushInBackground];
+    
+    if (self.deleteLessonArr.count) {
+        for (Lesson *les in self.deleteLessonArr) {
+            [les deleteFromCloud];
+        }
+    }
+    
     NSMutableArray *typeArr = [[NSMutableArray alloc] init];
     for (Lesson *les in self.lessonArray) {
         [les uploadToCloud];
@@ -330,9 +339,10 @@
         [func didSelected:NO];
         [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
     }
-
+    [self.deleteLessonArr addObject:self.selectLesson];
+    //从lessonArray中删除
+    [self.lessonArray removeObject:self.selectLesson];
     self.selectLesson = nil;
-    
 }
 
 - (void)checkLesson {
@@ -402,6 +412,10 @@
         pick.pageType = self.passType;
         if (![self.passType isEqualToString:@"Add"]) {
             pick.pageLesson = self.selectLesson;
+            NSDateFormatter *df = [[NSDateFormatter alloc] init];
+            [df setDateFormat:@"HH"];
+            pick.startHour = [[df stringFromDate:self.selectLesson.startTime] intValue];
+            pick.endHour = [[df stringFromDate:self.selectLesson.endTime] intValue];
         }
     }
 }
@@ -409,12 +423,24 @@
 //课程确认
 - (void)lessonConfirmed:(NSNotification *)notification {
     Lesson *lesson = [notification.userInfo objectForKey:@"Lesson"];
+    if (lesson.objectId) {
+        //说明是edit 删掉lessonArray里的
+        for (Lesson *temp in self.lessonArray) {
+            if ([temp.objectId isEqualToString:lesson.objectId]) {
+                [temp updateLesson:lesson];
+                //[self.lessonArray removeObject:temp];
+                break;
+            }
+        }
+    } else {
+        [self.lessonArray addObject:lesson];
+    }
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSString *strDate = [dateFormatter stringFromDate:lesson.startTime];
     NSLog(@"%@, %@", strDate, lesson.teacher.username);
     //最后一个就是最新添加的课程
-    [self.lessonArray addObject:lesson];
+    
 }
 
 - (void)lessonCancel:(NSNotification *)notification {

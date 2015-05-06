@@ -103,6 +103,11 @@
     NSRectFill(dirtyRect);
 }
 
+- (void)dealloc {
+    self.user.isSelected = NO;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"DisOtherItem" object:nil];
+}
+
 @end
 
 

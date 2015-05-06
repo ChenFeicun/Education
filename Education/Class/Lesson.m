@@ -51,8 +51,17 @@
     return stuId;
 }
 
+- (void)updateLesson:(Lesson *)newLesson {
+    self.startTime = newLesson.startTime;
+    self.endTime = newLesson.endTime;
+    self.students = newLesson.students;
+}
+
 - (void)uploadToCloud {
     AVObject *object = [AVObject objectWithClassName:@"Lesson"];
+    if (self.objectId) {
+        [object setObject:self.objectId forKey:@"objectId"];
+    }
     [object setObject:self.lessonType forKey:@"lessonType"];
     [object setObject:self.startTime forKey:@"startTime"];
     [object setObject:self.endTime forKey:@"endTime"];

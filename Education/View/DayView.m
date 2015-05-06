@@ -112,14 +112,27 @@
     [circleArr addObject:self.speakView];
     [circleArr addObject:self.readView];
     [circleArr addObject:self.writeView];
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [dict setObject:@YES forKey:@"听"];
+    [dict setObject:@YES forKey:@"说"];
+    [dict setObject:@YES forKey:@"读"];
+    [dict setObject:@YES forKey:@"写"];
+    
     for (int i = 0; i < lessonTypes.count; i++) {
         for (int j = 0; j < circleArr.count; j++) {
             NSLog(@"%@", ((Circle *)circleArr[j]).circleType);
             if ([lessonTypes[i] isEqualToString:((Circle *)circleArr[j]).circleType]) {
-                ((Circle *)circleArr[j]).hidden = NO;
+                //((Circle *)circleArr[j]).hidden = NO;
+                [dict setObject:@NO forKey:lessonTypes[i]];
+                break;
             }
         }
     }
+    for (Circle *cir in circleArr) {
+        cir.hidden = [[dict objectForKey:cir.circleType] boolValue];
+    }
+    
 }
 
 - (void)showWithType:(NSString *)type {

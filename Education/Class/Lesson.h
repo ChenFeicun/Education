@@ -24,5 +24,6 @@
 - (void)uploadToCloud;
 - (void)deleteFromCloud;
 - (NSMutableArray *)getStudentsIdOfLesson;
+- (void)updateLesson:(Lesson *)newLesson;
 
 @end
