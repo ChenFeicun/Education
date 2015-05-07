@@ -23,10 +23,11 @@
 		18150DF31AF61F0600CB4C5A /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 18150DF21AF61F0600CB4C5A /* User.m */; };
 		18150DF61AF70EE000CB4C5A /* Lesson.m in Sources */ = {isa = PBXBuildFile; fileRef = 18150DF51AF70EE000CB4C5A /* Lesson.m */; };
 		18150DF91AF7706200CB4C5A /* SelectTeacherViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18150DF81AF7706200CB4C5A /* SelectTeacherViewController.m */; };
+		18215BC41AFB579F003322EB /* DayInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18215BC31AFB579F003322EB /* DayInfoViewController.m */; };
 		1864B5661ADE5E750096CB84 /* DayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1864B5651ADE5E750096CB84 /* DayView.m */; };
 		18918FFC1AF1D4AD00215753 /* CollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 18918FFB1AF1D4AD00215753 /* CollectionItem.m */; };
 		18B6492D1AF05B8300C90CC7 /* TimeBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B6492C1AF05B8300C90CC7 /* TimeBlock.m */; };
-		18B6492F1AF0A28900C90CC7 /* jc.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 18B6492E1AF0A28900C90CC7 /* jc.jpg */; };
+		18B6492F1AF0A28900C90CC7 /* default.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 18B6492E1AF0A28900C90CC7 /* default.jpg */; };
 		18DBD73C1ADE56B900D174BB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DBD73B1ADE56B900D174BB /* AppDelegate.m */; };
 		18DBD73E1ADE56B900D174BB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DBD73D1ADE56B900D174BB /* main.m */; };
 		18DBD7431ADE56BA00D174BB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18DBD7421ADE56BA00D174BB /* Images.xcassets */; };
@@ -72,13 +73,15 @@
 		18150DF51AF70EE000CB4C5A /* Lesson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Lesson.m; path = Class/Lesson.m; sourceTree = "<group>"; };
 		18150DF71AF7706200CB4C5A /* SelectTeacherViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectTeacherViewController.h; path = ViewController/SelectTeacherViewController.h; sourceTree = "<group>"; };
 		18150DF81AF7706200CB4C5A /* SelectTeacherViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SelectTeacherViewController.m; path = ViewController/SelectTeacherViewController.m; sourceTree = "<group>"; };
+		18215BC21AFB579F003322EB /* DayInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DayInfoViewController.h; path = ViewController/DayInfoViewController.h; sourceTree = "<group>"; };
+		18215BC31AFB579F003322EB /* DayInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DayInfoViewController.m; path = ViewController/DayInfoViewController.m; sourceTree = "<group>"; };
 		1864B5641ADE5E750096CB84 /* DayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DayView.h; path = Education/View/DayView.h; sourceTree = "<group>"; };
 		1864B5651ADE5E750096CB84 /* DayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DayView.m; path = Education/View/DayView.m; sourceTree = "<group>"; };
 		18918FFA1AF1D4AD00215753 /* CollectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionItem.h; path = Education/View/CollectionItem.h; sourceTree = "<group>"; };
 		18918FFB1AF1D4AD00215753 /* CollectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionItem.m; path = Education/View/CollectionItem.m; sourceTree = "<group>"; };
 		18B6492B1AF05B8300C90CC7 /* TimeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeBlock.h; path = Education/View/TimeBlock.h; sourceTree = "<group>"; };
 		18B6492C1AF05B8300C90CC7 /* TimeBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TimeBlock.m; path = Education/View/TimeBlock.m; sourceTree = "<group>"; };
-		18B6492E1AF0A28900C90CC7 /* jc.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = jc.jpg; path = ../jc.jpg; sourceTree = "<group>"; };
+		18B6492E1AF0A28900C90CC7 /* default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = default.jpg; path = ../default.jpg; sourceTree = "<group>"; };
 		18DBD7351ADE56B900D174BB /* Education.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Education.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18DBD7391ADE56B900D174BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		18DBD73A1ADE56B900D174BB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -133,6 +136,8 @@
 				180A4A531AEDD86F00112073 /* ViewController.m */,
 				18150DF71AF7706200CB4C5A /* SelectTeacherViewController.h */,
 				18150DF81AF7706200CB4C5A /* SelectTeacherViewController.m */,
+				18215BC21AFB579F003322EB /* DayInfoViewController.h */,
+				18215BC31AFB579F003322EB /* DayInfoViewController.m */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -193,7 +198,7 @@
 		18DBD7371ADE56B900D174BB /* Education */ = {
 			isa = PBXGroup;
 			children = (
-				18B6492E1AF0A28900C90CC7 /* jc.jpg */,
+				18B6492E1AF0A28900C90CC7 /* default.jpg */,
 				180A4A571AEDD8A200112073 /* Class */,
 				1864B5671ADE5E7C0096CB84 /* View */,
 				180A4A4D1AEDD81A00112073 /* ViewController */,
@@ -319,7 +324,7 @@
 				180A4A391AE6508F00112073 /* previous.png in Resources */,
 				18DBD7431ADE56BA00D174BB /* Images.xcassets in Resources */,
 				18DBD7461ADE56BA00D174BB /* Main.storyboard in Resources */,
-				18B6492F1AF0A28900C90CC7 /* jc.jpg in Resources */,
+				18B6492F1AF0A28900C90CC7 /* default.jpg in Resources */,
 				180A4A381AE6508F00112073 /* next.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,6 +354,7 @@
 				180A4A561AEDD86F00112073 /* ViewController.m in Sources */,
 				18150DF91AF7706200CB4C5A /* SelectTeacherViewController.m in Sources */,
 				180A4A1B1AE4A0C600112073 /* HeadView.m in Sources */,
+				18215BC41AFB579F003322EB /* DayInfoViewController.m in Sources */,
 				180A4A541AEDD86F00112073 /* DayDetailViewController.m in Sources */,
 				180A4A3F1AE6725600112073 /* FuncBlockView.m in Sources */,
 				18DBD73E1ADE56B900D174BB /* main.m in Sources */,

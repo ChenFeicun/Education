@@ -51,10 +51,30 @@
     return stuId;
 }
 
+- (BOOL)isLessonContainsStudent:(User *)stu {
+    for (NSString *stuId in [self getStudentsIdOfLesson]) {
+        if ([stuId isEqualToString:stu.objectId]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)lessonRemoveStudent:(User *)stu {
+    //[self.students removeObject:stu];
+    for (User *user in self.students) {
+        if ([user.objectId isEqualToString:stu.objectId]) {
+            [self.students removeObject:user];
+            break;
+        }
+    }
+}
+
 - (void)updateLesson:(Lesson *)newLesson {
     self.startTime = newLesson.startTime;
     self.endTime = newLesson.endTime;
     self.students = newLesson.students;
+    self.teacher = newLesson.teacher;
 }
 
 - (void)uploadToCloud {
@@ -79,6 +99,18 @@
     AVObject *obj = [query getObjectWithId:self.objectId];
     [obj delete];
     
+}
+
+- (int)lessonStartHour {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"HH"];
+    return [[dateFormatter stringFromDate:self.startTime] intValue];
+}
+
+- (int)lessonEndHour {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"HH"];
+    return [[dateFormatter stringFromDate:self.endTime] intValue];
 }
 
 @end

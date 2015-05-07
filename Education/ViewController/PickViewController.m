@@ -27,6 +27,14 @@
 @property (strong, nonatomic) NSMutableArray *studentArray;
 //用于检索 联想时用  存名字
 @property (strong, nonatomic) NSMutableArray *stuSchArr;
+
+
+@property (strong, nonatomic) NSCollectionView *teacherCV;
+@property (strong, nonatomic) NSSearchField *teacherSearch;
+@property (strong, nonatomic) NSMutableArray *teacherArray;
+@property (strong, nonatomic) NSMutableArray *tchSchArr;
+@property (strong, nonatomic) User *selTch;
+
 @end
 
 @implementation PickViewController
@@ -38,6 +46,11 @@
     self.endMin = @"00";
     [self loadDataFromCloud];
     [self initCombobox];
+    
+    if ([self.selectUser.type isEqualToString:@"Teacher"]) {
+        self.selTch = self.selectUser;
+    }
+    
     if (![self.pageType isEqualToString:@"Check"]) {
         [self initButton];
     }
@@ -80,14 +93,30 @@
     AVQuery *query = [AVUser query];
     if ([self.pageType isEqualToString:@"Check"]) {
         [query whereKey:@"objectId" containedIn:[self.pageLesson getStudentsIdOfLesson]];
-    } else {
         [query whereKey:@"type" equalTo:@"Student"];
+    } else {
+        //[query whereKey:@"type" equalTo:@"Student"];
     }
     
     NSArray *arr = [query findObjects];
+    NSMutableArray *tempTchArr = [[NSMutableArray alloc] init];
+    NSMutableArray *tempStuArr = [[NSMutableArray alloc] init];
+    
+    for (AVUser *av in arr) {
+        User *user = [[User alloc] initWithAVUser:av];
+        if ([user.type isEqualToString:@"Student"]) {
+            [tempStuArr addObject:user];
+        } else if ([user.type isEqualToString:@"Teacher"]) {
+            [tempTchArr addObject:user];
+        }
+    }
+    
     self.studentArray = [[NSMutableArray alloc] init];
     self.stuSchArr = [[NSMutableArray alloc] init];
- 
+    self.teacherArray = [[NSMutableArray alloc] init];
+    self.tchSchArr = [[NSMutableArray alloc] init];
+    
+    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     if (![self.pageType isEqualToString:@"Add"]) {
         [dateFormatter setDateFormat:@"mm"];
@@ -108,18 +137,53 @@
     }
     NSArray *dayLesson = [lessonsQuery findObjects];
     NSLog(@"%li", dayLesson.count);
-    
+    NSMutableArray *lessons = [[NSMutableArray alloc] init];
+    for (AVObject *lesObj in dayLesson) {
+        Lesson *lesTep = [[Lesson alloc] initWithCloudLesson:lesObj];
+        [lessons addObject:lesTep];
+    }
 #warning 应该放在云端处理
-    for (AVUser *stu in arr) {
-         User *user = [[User alloc] initWithAVUser:stu];
+//判断老师冲突
+    if (![self.pageType isEqualToString:@"Check"]) {
+        for (User *user in tempTchArr) {
+            BOOL isConflict = NO;
+            for (Lesson *lesTep in lessons) {
+                if ([lesTep.teacher.objectId isEqualToString:user.objectId]) {
+                    //该老师有冲突
+                    isConflict = YES;
+                    break;
+                }
+            }
+            if (!isConflict) {
+//                NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
+//                user.image = picture;
+                if (![self.pageType isEqualToString:@"Edit"]) {
+                    user.isSelected = NO;
+                } else {
+                    if ([user.objectId isEqualToString:self.pageLesson.teacher.objectId]) {
+                        user.isSelected = YES;
+                    }
+                }
+                NSMutableDictionary *tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:user, @"User", nil];
+                
+                [self.tchSchArr addObject:user];
+                [self.teacherArray addObject:tempDic];
+            }
+        }
+    } else {
+        NSMutableDictionary *tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.pageLesson.teacher, @"User", nil];
+        [tempDic setValue:@"Check" forKey:@"Check"];
+        [self.teacherArray addObject:tempDic];
+    }
+//判断学生冲突
+    for (User *user in tempStuArr) {
         BOOL isConflict = NO;
-        for (AVObject *lesObj in dayLesson) {
-            Lesson *lesTep = [[Lesson alloc] initWithCloudLesson:lesObj];
+        for (Lesson *lesTep in lessons) {
             for (NSString *stuId in [lesTep getStudentsIdOfLesson]) {
                 if ([user.objectId isEqualToString:stuId]) {
                     //该学生有冲突
                     isConflict = YES;
-                    NSLog(@"%@有冲突", user.username);
+                    NSLog(@"%@有冲突", user.realName);
                     break;
                 }
             }
@@ -128,8 +192,8 @@
             }
         }
         if (!isConflict) {
-            NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
-            user.image = picture;
+//            NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
+//            user.image = picture;
             if (![self.pageType isEqualToString:@"Edit"]) {
                 user.isSelected = NO;
             } else {
@@ -180,6 +244,28 @@
 #warning 从数据库读取数据 照片-姓名
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemClick:) name:@"ItemClick" object:nil];
     
+    self.teacherCV = [[NSCollectionView alloc] initWithFrame:NSMakeRect(0, 0, 420, 150)];
+    //self.teacherCV.delegate = self;
+    [self.teacherCV setItemPrototype:[CollectionItem new]];
+    [self.teacherCV setContent:self.teacherArray];
+    [self.teacherCV setMaxNumberOfRows:1];
+    //[self.teacherCV setAutoresizingMask:(NSViewMinXMargin | NSViewWidthSizable | NSViewMaxXMargin | NSViewMinYMargin  | NSViewHeightSizable| NSViewMaxYMargin)];
+    //[self.teacherCV setAutoresizesSubviews:YES];
+    self.teacherCV.selectable = YES;
+    self.teacherCV.allowsMultipleSelection = NO;
+    NSScrollView *teacherScroll = [[NSScrollView alloc] initWithFrame:NSMakeRect(40, 40, 420, 150)];
+    teacherScroll.hasVerticalScroller = YES;
+    teacherScroll.hasHorizontalScroller = YES;
+    [teacherScroll setAutohidesScrollers:YES];
+    [teacherScroll setDocumentView:self.teacherCV];
+    [self.view addSubview:teacherScroll];
+    
+    self.teacherSearch = [[NSSearchField alloc] initWithFrame:NSMakeRect(20, 200, 100, 20)];
+    self.teacherSearch.target = self;
+    self.teacherSearch.action = @selector(searchTeacher:);
+    [self.view addSubview:self.teacherSearch];
+    
+//学生
     self.studentCV = [[NSCollectionView alloc] initWithFrame:NSMakeRect(0, 200, 520, 150)];
     [self.studentCV setItemPrototype:[CollectionItem new]];
     [self.studentCV setContent:self.studentArray];
@@ -201,12 +287,29 @@
     [self.view addSubview:self.studentSearch];
 }
 
+- (void)searchTeacher:(id)sender {
+    NSMutableArray *tempArr = [[NSMutableArray alloc] initWithArray:self.tchSchArr];
+    if ([self.teacherSearch.stringValue isEqualToString:@""] || !self.teacherSearch.stringValue) {
+        [self.teacherCV setContent:self.teacherArray];
+    } else {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"realName like[c] %@",[NSString stringWithFormat:@"%@*",self.teacherSearch.stringValue]];
+        //联想
+        [tempArr filterUsingPredicate:predicate];
+        NSMutableArray *arr = [[NSMutableArray alloc] init];
+        for (int i = 0; i < tempArr.count; i++) {
+            [arr addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:tempArr[i], @"User", nil]];
+        }
+        [self.teacherCV setContent:arr];
+    }
+    //NSLog(@"temArr count:%li", tempArr.count);
+}
+
 - (void)searchStudent:(id)sender {
     NSMutableArray *tempArr = [[NSMutableArray alloc] initWithArray:self.stuSchArr];
     if ([self.studentSearch.stringValue isEqualToString:@""] || !self.studentSearch.stringValue) {
         [self.studentCV setContent:self.studentArray];
     } else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username like[c] %@",[NSString stringWithFormat:@"%@*",self.studentSearch.stringValue]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"realName like[c] %@",[NSString stringWithFormat:@"%@*",self.studentSearch.stringValue]];
         //联想
         [tempArr filterUsingPredicate:predicate];
         
@@ -221,17 +324,20 @@
 - (void)itemClick:(NSNotification *)notification {
     User *user = [notification.userInfo objectForKey:@"User"];
     if ([user.type isEqualTo:@"Student"]) {
-        NSMutableString *stu = [[NSMutableString alloc] initWithString:@"Selected Students: "];
+        //NSMutableString *stu = [[NSMutableString alloc] initWithString:@"Selected Students: "];
         for (NSMutableDictionary *dict in self.studentArray) {
             User *stuUser = [dict objectForKey:@"User"];
             //比较有问题
-            if ([user.username isEqualTo:stuUser.username]) {
+            if ([user.objectId isEqualTo:stuUser.objectId]) {
                 stuUser.isSelected = user.isSelected;
             }
-            if (stuUser.isSelected) {
-                [stu appendString:[NSString stringWithFormat:@"%@, ", stuUser.username]];
-            }
+//            if (stuUser.isSelected) {
+//                [stu appendString:[NSString stringWithFormat:@"%@, ", stuUser.realName]];
+//            }
         }
+    } else if ([user.type isEqualToString:@"Teacher"]) {
+        self.selTch = user;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"DisOtherItem" object:nil userInfo:notification.userInfo];
     }
 }
 
@@ -315,14 +421,14 @@
             [selStu addObject:user];
         }
     }
-    NSLog(@"%li", selStu.count);
+    //NSLog(@"%li", selStu.count);
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     Lesson *lesson = [[Lesson alloc] init];
     lesson.startTime = [dateFormatter dateFromString:start];
     lesson.endTime = [dateFormatter dateFromString:end];
-    lesson.teacher = self.teacher;
+    lesson.teacher = self.selTch;
     lesson.students = selStu;
     lesson.lessonType = self.lessonType;
     if([self.pageType isEqualToString:@"Edit"]) {

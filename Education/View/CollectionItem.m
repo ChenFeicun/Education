@@ -35,31 +35,20 @@
         self.textField.bordered = NO;
         self.textField.alignment = NSCenterTextAlignment;
         
-//        self.isSelected = NO;
-//        //必须和属性名一致
-//        [self setValue:[NSNumber numberWithBool:self.isSelected] forKey:@"isSelected"];
-//        [self addObserver:self forKeyPath:@"isSelected" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:NULL];
-        
         [self addSubview:self.imageView];
         [self addSubview:self.textField];
     }
     return self;
 }
 
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-//    if([keyPath isEqualToString:@"isSelected"]) {
-//        [self setNeedsDisplay:YES];
-//    }
-//}
-
 - (void)disClickItem:(NSNotification *)notification {
 #warning 联想之后 进来的self.user 为空  为什么?
     @try {
         User *tempUser = [notification.userInfo objectForKey:@"User"];
-        NSLog(@"%@, %@, %@", self.user.username, self.user.type, self);
+        NSLog(@"%@, %@, %@", self.user.realName, self.user.type, self);
         if ([tempUser.type isEqualTo:self.user.type]) {
             if ([self.user.type isEqualTo:@"Teacher"]) {
-                if (![tempUser.username isEqualTo:self.user.username]) {
+                if (![tempUser.objectId isEqualTo:self.user.objectId]) {
                     self.user.isSelected = NO;
                 } else {
                     self.user.isSelected = YES;
@@ -77,7 +66,7 @@
 - (void)setRepresentedObject:(id)representedObject {
     self.user = [representedObject objectForKey:@"User"];
     self.imageView.image = self.user.image;
-    self.textField.stringValue = self.user.username;
+    self.textField.stringValue = self.user.realName;
     if ([representedObject objectForKey:@"Check"]) {
         self.disable = YES;
     }
@@ -141,7 +130,6 @@
 
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
-    //NSLog(@"%@", ((User *)representedObject).username);
     if ([representedObject objectForKey:@"User"]) {
         [((ItemView *)[self view]) setRepresentedObject:representedObject];
     }

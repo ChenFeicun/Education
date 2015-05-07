@@ -20,6 +20,7 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     [AVOSCloud setApplicationId:AVOS_ID clientKey:AVOS_KEY];
+    setenv("LOG_CURL", "YES", 0);
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {

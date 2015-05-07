@@ -45,24 +45,24 @@
     NSString *titleStr = [NSString stringWithFormat:@"%@年%@月%@日", [self.dateDict objectForKey:@"Year"], [self.dateDict objectForKey:@"Month"], [self.dateDict objectForKey:@"Day"]];
     self.title = titleStr;
     
-    if (self.teacher) {
+    if (self.selectUser) {
     
-    self.lessonArray = [[NSMutableArray alloc] init];
-    self.deleteLessonArr = [[NSMutableArray alloc] init];
-    [self initHours];
-    self.listenArray = [self funcArrayWithType:@"听" andIndex:1];
-    self.speakArray = [self funcArrayWithType:@"说" andIndex:2];
-    self.readArray = [self funcArrayWithType:@"读" andIndex:3];
-    self.writeArray =[self funcArrayWithType:@"写" andIndex:4];
-    self.timeArray = [[NSMutableDictionary alloc] init];
+        self.lessonArray = [[NSMutableArray alloc] init];
+        self.deleteLessonArr = [[NSMutableArray alloc] init];
+        [self initHours];
+        self.listenArray = [self funcArrayWithType:@"听" andIndex:1];
+        self.speakArray = [self funcArrayWithType:@"说" andIndex:2];
+        self.readArray = [self funcArrayWithType:@"读" andIndex:3];
+        self.writeArray =[self funcArrayWithType:@"写" andIndex:4];
+        self.timeArray = [[NSMutableDictionary alloc] init];
     
-    for (int i = 0; i < 24; i++) {
-        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
+        for (int i = 0; i < 24; i++) {
+            [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
     }
     
     [self initButton];
     
-    if (self.teacher) {
+    if (self.selectUser) {
         [self loadLessonDataFromCloud];
         if (self.lessonArray.count) {
             [self initViewWithData];
@@ -141,10 +141,14 @@
     AVQuery *query = [AVQuery queryWithClassName:@"Lesson"];
     [query whereKey:@"startTime" greaterThanOrEqualTo:start];
     [query whereKey:@"endTime" lessThanOrEqualTo:end];
-    [query whereKey:@"teacher" equalTo:self.teacher.objectId];
+    if ([self.selectUser.type isEqualToString:@"Student"]) {
+        [query whereKey:@"students" containsString:self.selectUser.objectId];
+    } else if ([self.selectUser.type isEqualToString:@"Teacher"]) {
+        [query whereKey:@"teacher" equalTo:self.selectUser.objectId];
+    }
     NSArray *lesArr = [query findObjects];
     for (AVObject *obj in lesArr) {
-        Lesson *lesson = [[Lesson alloc] initWithCloudLesson:obj andTeacher:self.teacher];
+        Lesson *lesson = [[Lesson alloc] initWithCloudLesson:obj];
         [self.lessonArray addObject:lesson];
     }
     //self.lessonArray = [[NSMutableArray alloc] initWithArray:[query findObjects]];
@@ -263,8 +267,14 @@
     NSMutableArray *typeArr = [[NSMutableArray alloc] init];
     for (Lesson *les in self.lessonArray) {
         [les uploadToCloud];
-        if (![typeArr containsObject:les.lessonType]) {
-            [typeArr addObject:les.lessonType];
+        if ([self.selectUser.type isEqualToString:@"Teacher"]) {
+            if ([self.selectUser.objectId isEqualToString:les.teacher.objectId] && ![typeArr containsObject:les.lessonType]) {
+                [typeArr addObject:les.lessonType];
+            }
+        } else if ([self.selectUser.type isEqualToString:@"Student"]) {
+            if ([les isLessonContainsStudent:self.selectUser] && ![typeArr containsObject:les.lessonType]) {
+                [typeArr addObject:les.lessonType];
+            }
         }
     }
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:typeArr, @"LessonTypes", nil];
@@ -328,20 +338,29 @@
 }
 
 - (void)deleteLesson {
-    //[self.selectLesson deleteFromCloud];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"HH"];
-    int start = [[formatter stringFromDate:self.selectLesson.startTime] intValue];
-    int end = [[formatter stringFromDate:self.selectLesson.endTime] intValue];
-    NSMutableArray *arr = [self getFuncArrayByType:self.selectLesson.lessonType];
-    for (int i = start; i <= end; i++) {
-        FuncBlockView *func = arr[23 - i];
-        [func didSelected:NO];
-        [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
+#warning 老师删是整个课都删 学生删是只删除自己
+    [self redrawLessonBlock:self.selectLesson.lessonType fromStart:[self.selectLesson lessonStartHour] toEnd:[self.selectLesson lessonEndHour]];
+    if ([self.selectUser.type isEqualToString:@"Teacher"]) {
+        [self.deleteLessonArr addObject:self.selectLesson];
+        [self.lessonArray removeObject:self.selectLesson];
+    } else if ([self.selectUser.type isEqualToString:@"Student"]) {
+        //删掉自己  如果是只有一个学生 那么正门课一起删掉
+        if ([self.selectLesson.students count] == 1) {
+            //如果不是自己  则根本不会显示(修改过)
+            [self.deleteLessonArr addObject:self.selectLesson];
+            [self.lessonArray removeObject:self.selectLesson];
+        } else {
+            for (Lesson *temp in self.lessonArray) {
+                if ([temp.objectId isEqualToString:self.selectLesson.objectId]) {
+                    [temp lessonRemoveStudent:self.selectUser];
+                    [self.selectLesson lessonRemoveStudent:self.selectUser];
+                    break;
+                }
+            }
+           
+        }
     }
-    [self.deleteLessonArr addObject:self.selectLesson];
-    //从lessonArray中删除
-    [self.lessonArray removeObject:self.selectLesson];
+    
     self.selectLesson = nil;
 }
 
@@ -408,9 +427,10 @@
         pick.lessonType = self.tempBlock.type;
         pick.startHour = self.firstHour;
         pick.endHour = self.lastHour;
-        pick.teacher = self.teacher;
+        pick.selectUser = self.selectUser;
         pick.pageType = self.passType;
         if (![self.passType isEqualToString:@"Add"]) {
+            pick.lessonType = self.selectLesson.lessonType;
             pick.pageLesson = self.selectLesson;
             NSDateFormatter *df = [[NSDateFormatter alloc] init];
             [df setDateFormat:@"HH"];
@@ -424,37 +444,44 @@
 - (void)lessonConfirmed:(NSNotification *)notification {
     Lesson *lesson = [notification.userInfo objectForKey:@"Lesson"];
     if (lesson.objectId) {
-        //说明是edit 删掉lessonArray里的
+        //说明是edit 更新lessonArray里的
         for (Lesson *temp in self.lessonArray) {
             if ([temp.objectId isEqualToString:lesson.objectId]) {
+                if ([self.selectUser.type isEqualToString:@"Teacher"]) {
+                    if (![self.selectUser.objectId isEqualToString:lesson.teacher.objectId]) {
+                        //说明换老师了  那显示的要删掉
+                        [self redrawLessonBlock:lesson.lessonType fromStart:[lesson lessonStartHour] toEnd:[lesson lessonEndHour]];
+                    
+                    }
+                } else if ([self.selectUser.type isEqualToString:@"Student"]) {
+                    if (![lesson isLessonContainsStudent:self.selectUser]) {
+                        [self redrawLessonBlock:lesson.lessonType fromStart:[lesson lessonStartHour] toEnd:[lesson lessonEndHour]];
+                    }
+                }
                 [temp updateLesson:lesson];
-                //[self.lessonArray removeObject:temp];
                 break;
             }
         }
     } else {
         [self.lessonArray addObject:lesson];
     }
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString *strDate = [dateFormatter stringFromDate:lesson.startTime];
-    NSLog(@"%@, %@", strDate, lesson.teacher.username);
-    //最后一个就是最新添加的课程
-    
 }
 
 - (void)lessonCancel:(NSNotification *)notification {
     NSDictionary *dict = notification.userInfo;
-    NSMutableArray *arr = [self getFuncArrayByType:[dict objectForKey:@"LessonType"]];
     int start = [[dict objectForKey:@"Start"] intValue];
     int end = [[dict objectForKey:@"End"] intValue];
-    //dispatch_async(dispatch_get_main_queue(), ^{
+    [self redrawLessonBlock:[dict objectForKey:@"LessonType"] fromStart:start toEnd:end];
+}
+
+- (void)redrawLessonBlock:(NSString *)type fromStart:(int)start toEnd:(int)end {
+    NSMutableArray *arr = [self getFuncArrayByType:type];
     for (int i = start; i <= end; i++) {
         FuncBlockView *func = arr[23 - i];
         [func didSelected:NO];
         [self.timeArray setObject:[NSNumber numberWithBool:YES] forKey:[NSString stringWithFormat:@"%i", i]];
     }
-    //});
+
 }
 
 @end

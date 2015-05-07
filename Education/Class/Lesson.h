@@ -23,7 +23,16 @@
 - (id)initWithCloudLesson:(AVObject *)lesson andTeacher:(User *)teacher;
 - (void)uploadToCloud;
 - (void)deleteFromCloud;
+//获取所有学生objectId
 - (NSMutableArray *)getStudentsIdOfLesson;
+//课程修改后更新呢
 - (void)updateLesson:(Lesson *)newLesson;
+//获取开始结束的小时
+- (int)lessonStartHour;
+- (int)lessonEndHour;
+//某个学生是否有这门课
+- (BOOL)isLessonContainsStudent:(User *)stu;
+//删除掉某个学生
+- (void)lessonRemoveStudent:(User *)stu;
 
 @end

@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) NSString *objectId;
 @property (strong, nonatomic) NSString *username;
+@property (strong, nonatomic) NSString *realName;
 @property (strong, nonatomic) NSString *password;
 @property (strong, nonatomic) NSString *type;
 @property (strong, nonatomic) NSImage *image;

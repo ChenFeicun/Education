@@ -9,7 +9,7 @@
 #import "SelectTeacherViewController.h"
 #import "CollectionItem.h"
 
-@interface SelectTeacherViewController ()
+@interface SelectTeacherViewController () <NSTableViewDataSource, NSTableViewDelegate>
 
 @property (strong, nonatomic) NSCollectionView *teacherCV;
 @property (strong, nonatomic) NSSearchField *teacherSearch;
@@ -18,13 +18,16 @@
 @property (strong, nonatomic) NSMutableArray *tchSchArr;
 @property (strong, nonatomic) User *selTch;
 
+@property (strong, nonatomic) NSTableView *teacherTV;
+@property (strong, nonatomic) NSMutableArray *tableArr;
+
 @end
 
 @implementation SelectTeacherViewController
 
 - (void)viewDidLoad {
-    [self loadDataFromCloud];
     [super viewDidLoad];
+    [self loadDataFromCloud];
     [self initTeacher];
     [self initButton];
     // Do view setup here.
@@ -61,8 +64,8 @@
         
         User *user = [[User alloc] initWithAVUser:tempUser];
         
-        NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
-        user.image = picture;
+//        NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
+//        user.image = picture;
         user.isSelected = NO;
         NSMutableDictionary *tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:user, @"User", nil];
         if ([user.type isEqualTo:@"Teacher"]) {
@@ -70,6 +73,7 @@
             [self.teacherArray addObject:tempDic];
         }
     }
+    self.tableArr = self.tchSchArr;
 }
 
 - (void)itemClick:(NSNotification *)notification {
@@ -108,32 +112,80 @@
     teacherScroll.hasHorizontalScroller = YES;
     [teacherScroll setAutohidesScrollers:YES];
     [teacherScroll setDocumentView:self.teacherCV];
-    [self.view addSubview:teacherScroll];
+    //[self.view addSubview:teacherScroll];
     
     self.teacherSearch = [[NSSearchField alloc] initWithFrame:NSMakeRect(20, 200, 100, 20)];
     self.teacherSearch.target = self;
     self.teacherSearch.action = @selector(searchTeacher:);
     [self.view addSubview:self.teacherSearch];
+
+    self.teacherTV = [[NSTableView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    self.teacherTV.dataSource = self;
+    self.teacherTV.delegate = self;
+    
+    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"NameCol"];
+    [[column headerCell] setStringValue:@"结果"];
+    //[[column headerCell] setHidden:YES];
+    [column setWidth:100.0];
+    [column setEditable:NO];
+    [column setResizingMask:NSTableColumnAutoresizingMask | NSTableColumnUserResizingMask];
+    [self.teacherTV addTableColumn:column];
+    
+    
+    NSScrollView *tableScroll = [[NSScrollView alloc] initWithFrame:NSMakeRect(20, 100, 100, 100)];
+    teacherScroll.hasVerticalScroller = YES;
+    teacherScroll.hasHorizontalScroller = NO;
+    [teacherScroll setAutohidesScrollers:YES];
+    [tableScroll setDocumentView:self.teacherTV];
+    [self.view addSubview:tableScroll];
 }
 
 //实现单选  点击item 发送通知传入item信息   接收通知后 返回一个通知 回传给所有item  将之前选择的item清空
-#warning 联想过后 点击会出问题
 - (void)searchTeacher:(id)sender {
     NSMutableArray *tempArr = [[NSMutableArray alloc] initWithArray:self.tchSchArr];
     if ([self.teacherSearch.stringValue isEqualToString:@""] || !self.teacherSearch.stringValue) {
-        [self.teacherCV setContent:self.teacherArray];
+        //[self.teacherCV setContent:self.teacherArray];
+        self.tableArr = self.tchSchArr;
+        [self.teacherTV reloadData];
     } else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username like[c] %@",[NSString stringWithFormat:@"%@*",self.teacherSearch.stringValue]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"realName like[c] %@",[NSString stringWithFormat:@"%@*",self.teacherSearch.stringValue]];
         //联想
         [tempArr filterUsingPredicate:predicate];
-        
-        NSMutableArray *arr = [[NSMutableArray alloc] init];
-        for (int i = 0; i < tempArr.count; i++) {
-            [arr addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:tempArr[i], @"User", nil]];
-        }
-        [self.teacherCV setContent:arr];
+        self.tableArr = tempArr;
+        [self.teacherTV reloadData];
+//        NSMutableArray *arr = [[NSMutableArray alloc] init];
+//        for (int i = 0; i < tempArr.count; i++) {
+//            [arr addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:tempArr[i], @"User", nil]];
+//        }
+//        [self.teacherCV setContent:arr];
     }
-    NSLog(@"temArr count:%li", tempArr.count);
+    //NSLog(@"temArr count:%li", tempArr.count);
 }
 
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return self.tableArr.count;
+}
+
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    return ((User *)self.tableArr[row]).realName;
+}
+
+-(NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+#warning 自己写Cell
+    //id cell = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+    NSButton *cell = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+    cell.title = ((User *)self.tableArr[row]).realName;
+    //[cell setButtonType:NSMomentaryPushInButton];
+    cell.bordered = NO;
+    cell.bezelStyle = NSRoundRectBezelStyle;
+    cell.alignment = NSLeftTextAlignment;
+    cell.target = self;
+    cell.tag = row;
+    cell.action = @selector(cellClick:);
+    return cell;
+}
+
+- (void)cellClick:(NSButton *)sender {
+    NSLog(@"%@", ((User *)self.tableArr[sender.tag]).realName);
+}
 @end

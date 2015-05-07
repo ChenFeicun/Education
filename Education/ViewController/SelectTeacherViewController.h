@@ -10,4 +10,6 @@
 
 @interface SelectTeacherViewController : NSViewController
 
+//并没有什么卵用的类
+
 @end

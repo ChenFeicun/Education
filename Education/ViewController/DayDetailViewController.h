@@ -1,7 +1,7 @@
 //
 //  DayDetailViewController.h
 //  Education
-//
+//  选择查看的人之后弹出的页面
 //  Created by Feicun on 15/4/21.
 //  Copyright (c) 2015年 ShuXiaJian.Studio. All rights reserved.
 //
@@ -13,6 +13,6 @@
 
 @property (strong, nonatomic) NSDictionary *dateDict; //上个页面传递来的 Day信息
 @property (nonatomic) BOOL isEditable;//页面信息是否可编辑 根据日期来
-@property (strong, nonatomic) User *teacher;
+@property (strong, nonatomic) User *selectUser;
 
 @end
