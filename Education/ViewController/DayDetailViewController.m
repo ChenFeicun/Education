@@ -451,7 +451,6 @@
                     if (![self.selectUser.objectId isEqualToString:lesson.teacher.objectId]) {
                         //说明换老师了  那显示的要删掉
                         [self redrawLessonBlock:lesson.lessonType fromStart:[lesson lessonStartHour] toEnd:[lesson lessonEndHour]];
-                    
                     }
                 } else if ([self.selectUser.type isEqualToString:@"Student"]) {
                     if (![lesson isLessonContainsStudent:self.selectUser]) {

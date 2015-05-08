@@ -155,15 +155,19 @@
                 }
             }
             if (!isConflict) {
-//                NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
-//                user.image = picture;
-                if (![self.pageType isEqualToString:@"Edit"]) {
-                    user.isSelected = NO;
-                } else {
+//                if ([self.pageType isEqualToString:@"Check"]) {
+//                    user.isSelected = NO;
+//                } else {//if (![self.pageType isEqualToString:@"Edit"]) {
+                if ([self.pageType isEqualToString:@"Add"]) {
+                    if ([user.objectId isEqualToString:self.selectUser.objectId]) {
+                         user.isSelected = YES;
+                    }
+                } else if ([self.pageType isEqualToString:@"Edit"]) {
                     if ([user.objectId isEqualToString:self.pageLesson.teacher.objectId]) {
                         user.isSelected = YES;
                     }
                 }
+                //}
                 NSMutableDictionary *tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:user, @"User", nil];
                 
                 [self.tchSchArr addObject:user];
@@ -192,11 +196,13 @@
             }
         }
         if (!isConflict) {
-//            NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
-//            user.image = picture;
-            if (![self.pageType isEqualToString:@"Edit"]) {
+            if ([self.pageType isEqualToString:@"Check"]) {
                 user.isSelected = NO;
-            } else {
+            } else if ([self.pageType isEqualToString:@"Add"]) {
+                if ([self.selectUser.objectId isEqualToString:user.objectId]) {
+                    user.isSelected = YES;
+                }
+            } else if ([self.pageType isEqualToString:@"Edit"]) {
                 for (NSString *stuId in [self.pageLesson getStudentsIdOfLesson]) {
                     if ([user.objectId isEqualToString:stuId]) {
                         user.isSelected = YES;
@@ -218,8 +224,6 @@
 //    for (int i = 0; i < [arr count]; i++) {
 //        AVUser *tempUser = (AVUser *)arr[i];
 //        User *user = [[User alloc] initWithAVUser:tempUser];
-//        NSImage *picture = [NSImage imageNamed:@"jc.jpg"];
-//        user.image = picture;
 //        if (![self.pageType isEqualToString:@"Edit"]) {
 //            user.isSelected = NO;
 //        } else {

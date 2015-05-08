@@ -10,4 +10,6 @@
 
 @interface DayInfoViewController : NSViewController
 
+@property (strong, nonatomic) NSDictionary *dateDict; //上个页面传递来的 Day信息
+
 @end

@@ -641,8 +641,8 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate"/>
             </objects>
             <point key="canvasLocation" x="75" y="0.0"/>
         </scene>
@@ -674,17 +674,17 @@
                     </view>
                     <connections>
                         <segue destination="6dH-OT-zKo" kind="modal" identifier="DayDetail" id="LDC-Oj-Suy"/>
-                        <segue destination="BgE-Ub-wfX" kind="modal" identifier="SelectTeacher" id="55B-Em-Cl3"/>
+                        <segue destination="BgE-Ub-wfX" kind="modal" identifier="DayInfo" id="55B-Em-Cl3"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75.5" y="830.5"/>
         </scene>
-        <!--Select Teacher View Controller-->
+        <!--Day Info View Controller-->
         <scene sceneID="u03-uW-jN6">
             <objects>
-                <viewController id="BgE-Ub-wfX" customClass="SelectTeacherViewController" sceneMemberID="viewController">
+                <viewController id="BgE-Ub-wfX" customClass="DayInfoViewController" sceneMemberID="viewController">
                     <view key="view" id="lDl-gE-Yno">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>

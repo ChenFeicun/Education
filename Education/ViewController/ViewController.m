@@ -10,6 +10,7 @@
 #import "MonthView.h"
 #import "HeadView.h"
 #import "DayDetailViewController.h"
+#import "DayInfoViewController.h"
 
 @interface ViewController() <ToadyClick, MonthDayClick, NSTableViewDataSource, NSTableViewDelegate>
 
@@ -311,13 +312,13 @@
             [self initViewWithData];
         }
     } else {
-//        if ([self isEditable:dayView.day]) {
-//            NSLog(@"OK!!!!!!");
         self.chosenDay = dayView;
-        [self performSegueWithIdentifier:@"DayDetail" sender:self];
-//        } else {
-//            NSLog(@"NOOOOOOOOOOOOO!!!!");
-//        }
+        if (self.selectUser) {
+            [self performSegueWithIdentifier:@"DayDetail" sender:self];
+        } else {
+            [self performSegueWithIdentifier:@"DayInfo" sender:self];
+        }
+        
     }
 }
 //跳转至 某天的页面
@@ -330,6 +331,10 @@
             controller.selectUser = self.selectUser;
         }
         controller.isEditable = [self isEditable:self.chosenDay.day];
+    } else if ([segue.identifier isEqualToString:@"DayInfo"]) {
+        DayInfoViewController *controller = segue.destinationController;
+        NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:[NSString stringWithFormat:@"%i", self.chosenDay.day], @"Day", [NSString stringWithFormat:@"%i", self.month], @"Month", [NSString stringWithFormat:@"%i", self.year], @"Year", nil];
+        controller.dateDict = dict;
     }
 }
 
